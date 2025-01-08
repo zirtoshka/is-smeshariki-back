@@ -7,19 +7,17 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Data
 @Entity
-@Table(name = "application_for_treatment_propensity")
-public class ApplicationForTreatmentPropensity {
+@Table(name = "trigger_word")
+public class TriggerWord {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "application_for_treatment_id", nullable = false)
-    private ApplicationForTreatment applicationForTreatment;
+    @Column(nullable = false, length = 64)
+    private String word;
 
     @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "propensity_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Propensity propensity;
 }

@@ -2,6 +2,8 @@ package itma.smesharikiback.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -15,10 +17,12 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "smesharik_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Smesharik smesharik;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
 
     @Column(nullable = false)
@@ -26,6 +30,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "comment_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Comment parentComment;
 
     @Column(nullable = false, length = 512)

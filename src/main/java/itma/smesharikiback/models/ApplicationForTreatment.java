@@ -2,6 +2,8 @@ package itma.smesharikiback.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Data
 @Entity
@@ -13,10 +15,12 @@ public class ApplicationForTreatment {
 
     @ManyToOne
     @JoinColumn(name = "post_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
 
     @ManyToOne
     @JoinColumn(name = "comment_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Comment comment;
 
     @Enumerated(EnumType.STRING)
@@ -25,5 +29,6 @@ public class ApplicationForTreatment {
 
     @ManyToOne
     @JoinColumn(name = "doctor_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Smesharik doctor;
 }

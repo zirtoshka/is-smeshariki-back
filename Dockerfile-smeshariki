@@ -1,0 +1,10 @@
+FROM maven:3.9.9-amazoncorretto-21-alpine AS build
+WORKDIR /build
+COPY . .
+RUN mvn clean package -DskipTests
+
+FROM amazoncorretto:21-alpine-jdk
+WORKDIR /app
+COPY --from=build /build/target/smeshariki-back-0.0.1-SNAPSHOT.war /app/smeshariki-back-0.0.1-SNAPSHOT.war
+EXPOSE 8081
+CMD ["java", "-jar", "/app/smeshariki-back-0.0.1-SNAPSHOT.war"]

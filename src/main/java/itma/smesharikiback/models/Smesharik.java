@@ -2,13 +2,24 @@ package itma.smesharikiback.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Data
 @Entity
+@Getter
+@Setter
+@Accessors(chain = true)
 @Table(name = "smesharik")
-public class Smesharik {
+public class Smesharik implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -28,9 +39,6 @@ public class Smesharik {
     @Column(nullable = false)
     private LocalDateTime lastActive = LocalDateTime.now();
 
-    @Column(nullable = false, length = 64)
-    private String salt;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private SmesharikRole role = SmesharikRole.USER;
@@ -38,4 +46,13 @@ public class Smesharik {
     @Column(nullable = false)
     private Boolean isOnline = false;
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public String getUsername() {
+       return getLogin();
+    }
 }

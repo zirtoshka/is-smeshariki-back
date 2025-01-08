@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: smeshariki-back
+  config:
+    import:
+      secret.yaml

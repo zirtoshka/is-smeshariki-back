@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface SmesharikRepository extends JpaRepository<Smesharik, Long> {
     Optional<Smesharik> findByLogin(String login);
-    Optional<Smesharik> findByEmail(String email);
+//    Optional<Smesharik> findByEmail(String email);
     boolean existsByLogin(String login);
     boolean existsByEmail(String email);
 }

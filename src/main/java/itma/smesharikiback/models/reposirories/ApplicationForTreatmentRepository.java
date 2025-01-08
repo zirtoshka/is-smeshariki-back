@@ -1,6 +1,7 @@
 package itma.smesharikiback.models.reposirories;
 
 import itma.smesharikiback.models.ApplicationForTreatment;
+import itma.smesharikiback.models.Smesharik;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

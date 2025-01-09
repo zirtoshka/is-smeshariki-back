@@ -1,3 +1,5 @@
+server:
+  port: 8081
 spring:
   application:
     name: smeshariki-back
@@ -14,6 +16,11 @@ spring:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    url: jdbc:postgresql://postgres:5432/studs
-    #    url: jdbc:postgresql://localhost:5433/studs
+#    url: jdbc:postgresql://postgres:5432/studs
+    url: jdbc:postgresql://localhost:5433/studs
     driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      mode: always
+      platform: postgres
+

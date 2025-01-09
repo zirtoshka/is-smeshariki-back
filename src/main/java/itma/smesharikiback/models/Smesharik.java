@@ -21,7 +21,7 @@ import java.util.List;
 @Table(name = "smesharik")
 public class Smesharik implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, length = 64)
@@ -53,6 +53,6 @@ public class Smesharik implements UserDetails {
 
     @Override
     public String getUsername() {
-       return getLogin();
+        return getLogin();
     }
 }

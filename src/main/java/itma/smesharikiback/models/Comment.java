@@ -1,7 +1,9 @@
 package itma.smesharikiback.models;
 
+import itma.smesharikiback.requests.CommentRequest;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -9,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
+@Accessors(chain = true)
 @Table(name = "comment")
 public class Comment {
     @Id
@@ -35,4 +38,6 @@ public class Comment {
 
     @Column(nullable = false, length = 512)
     private String text;
+
+
 }

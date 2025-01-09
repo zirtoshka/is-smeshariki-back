@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Data
 @Entity
@@ -45,6 +47,7 @@ public class Smesharik implements UserDetails {
 
     @Column(nullable = false)
     private Boolean isOnline = false;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

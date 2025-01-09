@@ -2,6 +2,7 @@ package itma.smesharikiback.config;
 
 
 import itma.smesharikiback.auth.JwtAuthenticationFilter;
+import itma.smesharikiback.auth.LoginPasswordAuthFilter;
 import itma.smesharikiback.services.SmesharikService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -37,17 +38,19 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        System.out.println("jopa");
         http.csrf(AbstractHttpConfigurer::disable)
                 .anonymous(AnonymousConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/api/**").hasAnyRole("ADMIN", "USER", "DOCTOR")
-                        .requestMatchers("/ws/**").hasAnyRole("ADMIN", "USER", "DOCTOR")
+                        .requestMatchers("/api/**").hasAnyAuthority("ADMIN", "USER", "DOCTOR")
+                        .requestMatchers("/ws/**").hasAnyAuthority("ADMIN", "USER", "DOCTOR")
                         .anyRequest().authenticated())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 

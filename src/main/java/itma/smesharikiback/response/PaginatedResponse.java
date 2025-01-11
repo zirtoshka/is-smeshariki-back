@@ -10,7 +10,7 @@ import java.util.List;
 @Accessors(chain = true)
 @AllArgsConstructor
 public class PaginatedResponse<T> {
-    private List<?> content;
+    private List<T> content;
     private Integer totalPages;
     private Long totalElements;
     private Integer currentPage;

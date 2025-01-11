@@ -22,7 +22,7 @@ public class MinioConfiguration {
     private String bucketName;
 
     @Bean
-    public MinioClient minioClient() throws MinioException {
+    public MinioClient minioClient() {
         return MinioClient.builder()
                 .endpoint(minioUrl)
                 .credentials(accessKey, secretKey)

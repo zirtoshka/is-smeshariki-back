@@ -8,7 +8,6 @@ import itma.smesharikiback.config.PaginationSpecification;
 import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.Post;
 import itma.smesharikiback.models.reposirories.PostRepository;
-import itma.smesharikiback.models.reposirories.SmesharikRepository;
 import itma.smesharikiback.response.PaginatedResponse;
 import itma.smesharikiback.response.PostResponse;
 import jakarta.validation.constraints.Max;

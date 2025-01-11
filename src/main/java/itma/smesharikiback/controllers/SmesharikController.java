@@ -3,7 +3,6 @@ package itma.smesharikiback.controllers;
 import itma.smesharikiback.requests.SmesharikUpdateRequest;
 import itma.smesharikiback.response.SmesharikResponse;
 import itma.smesharikiback.services.SmesharikService;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;

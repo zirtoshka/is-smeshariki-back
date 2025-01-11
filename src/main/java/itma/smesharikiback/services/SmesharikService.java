@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class SmesharikService {
@@ -23,11 +26,17 @@ public class SmesharikService {
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public Smesharik create(Smesharik smesharik) {
+        Map<String, String> errors = new HashMap<>();
+
         if (repository.existsByLogin(smesharik.getUsername())) {
-            throw new GeneralException(HttpStatus.BAD_REQUEST, "Пользователь с таким login уже существует");
+            errors.put("login", "Пользователь с таким login уже существует");
         }
         if (repository.existsByEmail(smesharik.getEmail())) {
-            throw new GeneralException(HttpStatus.BAD_REQUEST, "Пользователь с таким email уже существует");
+            errors.put("email", "Пользователь с таким email уже существует");
+        }
+
+        if (!errors.isEmpty()) {
+            throw new GeneralException(HttpStatus.BAD_REQUEST, errors);
         }
 
         return save(smesharik);

@@ -1,7 +1,9 @@
 package itma.smesharikiback.controllers;
 
+import itma.smesharikiback.exceptions.GeneralException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,12 +15,6 @@ import java.util.Map;
 
 @ControllerAdvice
 public class ExceptionAdvice {
-    @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<String> handleResponseStatusException(ResponseStatusException ex) {
-        HttpStatus status = (HttpStatus) ex.getStatusCode();
-        String message = ex.getReason();
-        return ResponseEntity.status(status).body(message);
-    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     private ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -28,6 +24,18 @@ public class ExceptionAdvice {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
+        return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(GeneralException.class)
+    public ResponseEntity<Map<String, String>> handleGeneralException(GeneralException ex) {
+        return ResponseEntity.status(ex.getStatus()).body(ex.getErrors());
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<?> AuthException(AuthenticationException e) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", "Неверный логин или пароль!");
         return ResponseEntity.badRequest().body(errors);
     }
 

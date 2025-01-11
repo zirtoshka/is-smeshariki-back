@@ -1,13 +1,20 @@
 package itma.smesharikiback.exceptions;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-public class GeneralException extends RuntimeException {
-    public HttpStatus httpStatus;
+import java.util.Map;
 
-    public GeneralException(HttpStatus httpStatus, String message) {
-        super(message);
-        this.httpStatus = httpStatus;
+@Getter
+public class GeneralException extends RuntimeException {
+    private final HttpStatus status;
+    private final Map<String, String> errors;
+
+    public GeneralException(HttpStatus status, Map<String, String> errors) {
+        super("Ошибка валидации");
+        this.status = status;
+        this.errors = errors;
     }
+
 }
 

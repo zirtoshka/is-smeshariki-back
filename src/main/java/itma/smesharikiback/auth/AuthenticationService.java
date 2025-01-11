@@ -2,6 +2,8 @@ package itma.smesharikiback.auth;
 
 import itma.smesharikiback.models.Smesharik;
 import itma.smesharikiback.models.SmesharikRole;
+import itma.smesharikiback.requests.SmesharikSignInRequest;
+import itma.smesharikiback.requests.SmesharikSignUpRequest;
 import itma.smesharikiback.services.SmesharikService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,17 +28,17 @@ public class AuthenticationService {
                 .setLogin(request.getLogin())
                 .setRole(SmesharikRole.USER);
 
-        try {
-            smesharikService.create(user);
-        } catch (Exception e) {
-            return new JwtAuthenticationResponse("", e.getMessage());
-        }
+        smesharikService.create(user);
 
         var jwt = jwtService.generateToken(user);
         return new JwtAuthenticationResponse(jwt, "OK");
     }
 
     public JwtAuthenticationResponse signIn(SmesharikSignInRequest request) {
+        System.out.println(new UsernamePasswordAuthenticationToken(
+                request.getLogin(),
+                request.getPassword()
+        ));
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.getLogin(),
                 request.getPassword()

@@ -1,5 +1,7 @@
 package itma.smesharikiback.controllers;
 
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import itma.smesharikiback.exceptions.GeneralException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -31,9 +33,16 @@ public class ExceptionAdvice {
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<?> AuthException(AuthenticationException ignoredE) {
+    public ResponseEntity<?> authException(AuthenticationException ignoredE) {
         Map<String, String> errors = new HashMap<>();
         errors.put("message", "Неверный логин или пароль!");
+        return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<?> jwtException(JwtException ignoredE) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", "Неверный токен!");
         return ResponseEntity.badRequest().body(errors);
     }
 

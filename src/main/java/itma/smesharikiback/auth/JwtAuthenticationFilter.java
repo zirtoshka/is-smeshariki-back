@@ -1,5 +1,7 @@
 package itma.smesharikiback.auth;
 
+import io.jsonwebtoken.JwtException;
+import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.Smesharik;
 import itma.smesharikiback.models.reposirories.SmesharikRepository;
 import jakarta.servlet.FilterChain;
@@ -8,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -18,6 +21,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -46,13 +51,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String jwt = authHeader.substring(BEARER_PREFIX.length());
-        String login = jwtService.extractLogin(jwt);
-        System.out.println(jwt + login);
+
+        String login;
+        try {
+            login = jwtService.extractLogin(jwt);
+        } catch (JwtException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
 
         if (!login.isEmpty() && SecurityContextHolder.getContext().getAuthentication() == null) {
-            Smesharik user = smesharikRepository
-                    .findByLogin(login).get();
-            System.out.println(user);
+            Optional<Smesharik> userOpt = smesharikRepository
+                    .findByLogin(login);
+
+            if (userOpt.isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
+            Smesharik user = userOpt.get();
 
             if (jwtService.isTokenValid(jwt, user)) {
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
@@ -66,7 +84,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 context.setAuthentication(authToken);
                 SecurityContextHolder.setContext(context);
-                System.out.println(user.getAuthorities()+" sdfsfskkflfksdkllk");
             }
         }
         filterChain.doFilter(request, response);

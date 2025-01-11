@@ -26,7 +26,7 @@ public class Post {
     @Column(length = 4096)
     private String text;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "private")
     private Boolean isPrivate = true;
 
     private LocalDateTime publicationDate;

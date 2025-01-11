@@ -1,7 +1,6 @@
 package itma.smesharikiback.controllers;
 
 import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.MalformedJwtException;
 import itma.smesharikiback.exceptions.GeneralException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;

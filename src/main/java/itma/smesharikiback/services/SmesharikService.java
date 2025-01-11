@@ -25,7 +25,7 @@ public class SmesharikService {
 
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public Smesharik create(Smesharik smesharik) {
+    public void create(Smesharik smesharik) {
         Map<String, String> errors = new HashMap<>();
 
         if (repository.existsByLogin(smesharik.getUsername())) {
@@ -39,7 +39,7 @@ public class SmesharikService {
             throw new GeneralException(HttpStatus.BAD_REQUEST, errors);
         }
 
-        return save(smesharik);
+        save(smesharik);
     }
 
 

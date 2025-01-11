@@ -66,7 +66,7 @@ public class PostService {
         return buildResponse(post);
     }
 
-    public @NotNull PaginatedResponse<Post> getAll(
+    public @NotNull PaginatedResponse<PostResponse> getAll(
             String filter,
             String sortField,
             @NotNull Boolean ascending,
@@ -86,7 +86,7 @@ public class PostService {
                 .map(this::buildResponse)
                 .collect(Collectors.toList());
 
-        return new PaginatedResponse<>(
+        return new PaginatedResponse<PostResponse>(
                 content,
                 resultPage.getTotalPages(),
                 resultPage.getTotalElements(),

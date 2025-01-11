@@ -35,7 +35,7 @@ public class PostController {
     }
 
     @GetMapping
-    public @NotNull PaginatedResponse<Post> getAll(
+    public @NotNull PaginatedResponse<PostResponse> getAll(
             @RequestParam(required = false, defaultValue = "") String filter,
             @RequestParam(required = false, defaultValue = "publicationDate") String sortField,
             @RequestParam(required = false, defaultValue = "true") @NotNull Boolean ascending,

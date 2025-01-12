@@ -1,6 +1,5 @@
 package itma.smesharikiback.controllers;
 
-import itma.smesharikiback.models.Post;
 import itma.smesharikiback.response.PaginatedResponse;
 import itma.smesharikiback.response.PostResponse;
 import itma.smesharikiback.services.PostService;

@@ -86,7 +86,7 @@ public class PostService {
                 .map(this::buildResponse)
                 .collect(Collectors.toList());
 
-        return new PaginatedResponse<PostResponse>(
+        return new PaginatedResponse<>(
                 content,
                 resultPage.getTotalPages(),
                 resultPage.getTotalElements(),

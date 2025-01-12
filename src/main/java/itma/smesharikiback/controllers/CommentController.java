@@ -1,16 +1,10 @@
 package itma.smesharikiback.controllers;
 
-import itma.smesharikiback.models.Comment;
-import itma.smesharikiback.models.reposirories.CommentRepository;
 import itma.smesharikiback.requests.CommentRequest;
 import itma.smesharikiback.response.CommentResponse;
 import itma.smesharikiback.services.CommentService;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

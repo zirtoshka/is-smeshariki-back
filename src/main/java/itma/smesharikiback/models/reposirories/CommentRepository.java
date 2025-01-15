@@ -2,11 +2,33 @@ package itma.smesharikiback.models.reposirories;
 
 import itma.smesharikiback.models.Comment;
 import itma.smesharikiback.models.Post;
+import itma.smesharikiback.models.dto.CommentWithChildrenDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface CommentRepository extends JpaRepository<Comment, Long> {
+public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpecificationExecutor<Post> {
     List<Comment> findByPost(Post post);
     List<Comment> findByParentComment(Comment parentComment);
+
+    @Query("SELECT new itma.smesharikiback.models.dto.CommentWithChildrenDto(c.id, c.smesharik.id, c.post.id, " +
+            "c.creationDate, c.parentComment.id, c.text, " +
+            "CASE WHEN EXISTS (SELECT 1 FROM Comment c2 WHERE c2.parentComment = c) THEN true ELSE false END) " +
+            "FROM Comment c " +
+            "WHERE c.id = :id")
+    Optional<CommentWithChildrenDto> findByIdWithChildren(Long id);
+
+    @Query("SELECT new itma.smesharikiback.models.dto.CommentWithChildrenDto(c.id, c.smesharik.id, c.post.id, " +
+            "c.creationDate, c.parentComment.id, c.text, " +
+            "CASE WHEN EXISTS (SELECT 1 FROM Comment c2 WHERE c2.parentComment = c) THEN true ELSE false END) " +
+            "FROM Comment c " +
+            "WHERE (c.post = :post OR c.parentComment = :comment) " +
+            "ORDER BY c.creationDate DESC")
+    Page<CommentWithChildrenDto> findCommentsByPostOrParentComment(Post post, Comment comment, Pageable pageRequest);
+
 }

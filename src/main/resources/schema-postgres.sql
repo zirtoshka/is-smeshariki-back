@@ -181,3 +181,8 @@ CREATE table if not exists complaint
     CHECK (post_id IS NOT NULL OR comment_id IS NOT NULL),
     CHECK (post_id IS NULL OR comment_id IS NULL)
 );
+
+CREATE INDEX comment_creation_date_idx ON comment (creation_date);
+CREATE INDEX comment_post_idx ON comment(post_id);
+CREATE INDEX comment_parent_comment_idx ON comment(comment_id);
+

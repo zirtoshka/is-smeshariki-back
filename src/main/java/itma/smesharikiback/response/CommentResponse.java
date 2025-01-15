@@ -8,10 +8,10 @@ import java.time.LocalDateTime;
 @Data
 @Accessors(chain = true)
 public class CommentResponse {
-    private Long id;
-    private Long smesharik;
-    private Long post;
-    private LocalDateTime creationDate;
-    private Long parentComment;
-    private String text;
+    protected Long id;
+    protected Long smesharik;
+    protected Long post;
+    protected LocalDateTime creationDate;
+    protected Long parentComment;
+    protected String text;
 }

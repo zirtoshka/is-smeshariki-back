@@ -11,10 +11,10 @@ import lombok.experimental.Accessors;
 public class CommentRequest {
 
     @Min(value = 0, message = "Значение поля y должно быть больше 0")
-    private Long postId;
+    private Long post;
 
     @Min(value = 0, message = "Значение поля y должно быть больше 0")
-    private Long parentCommentId;
+    private Long parentComment;
 
     @NotNull(message = "текст не может быть null")
     @NotBlank(message = "комментарий не может быть пустым")

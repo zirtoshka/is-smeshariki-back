@@ -3,7 +3,6 @@ package itma.smesharikiback.controllers;
 import itma.smesharikiback.requests.CommentRequest;
 import itma.smesharikiback.response.CommentResponse;
 import itma.smesharikiback.response.PaginatedResponse;
-import itma.smesharikiback.response.PostResponse;
 import itma.smesharikiback.services.CommentService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

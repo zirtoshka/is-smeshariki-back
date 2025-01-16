@@ -31,11 +31,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor(onConstructor_ = {@Autowired})
 public class CommentService {
     private final SmesharikService smesharikService;
-    protected CommentRepository commentRepository;
-    protected PostRepository postRepository;
+    private final CommentRepository commentRepository;
+    private final CommonService commonService;
 
     public CommentResponse create(CommentRequest request) throws GeneralException {
-        Pair<Comment, Post> pair = getParentCommentOrPost(request.getParentComment(), request.getPost());
+        Pair<Comment, Post> pair = commonService.getParentCommentOrPost(request.getParentComment(), request.getPost());
         Comment comment = new Comment();
         Post post = pair.getRight();
         Comment comment1 = pair.getLeft();
@@ -68,6 +68,7 @@ public class CommentService {
         if (comment.getParentComment() != null) response.setParentComment(comment.getParentComment());
         if (comment.getPost() != null) response.setPost(comment.getPost());
         response.setHasChildren(comment.isHasChildren());
+        response.setCountCarrots(comment.getCountCarrots());
 
         return (CommentWithChildrenResponse) response
                 .setId(comment.getId())
@@ -87,7 +88,7 @@ public class CommentService {
     }
 
     public PaginatedResponse<CommentResponse> getAll(Long commentId, Long postId, @Min(value = 0) Integer page, @Min(value = 1) @Max(value = 50) Integer size) {
-        Pair<Comment, Post> pair = getParentCommentOrPost(commentId, postId);
+        Pair<Comment, Post> pair = commonService.getParentCommentOrPost(commentId, postId);
 
         PageRequest pageable = PageRequest.of(page, size);
 
@@ -108,24 +109,5 @@ public class CommentService {
         );
     }
 
-    public Pair<Comment, Post> getParentCommentOrPost(Long commentId, Long postId) {
-        HashMap<String, String> map = new HashMap<>();
-        Optional<Post> postOpt = Optional.empty();
-        Optional<Comment> commentOpt = Optional.empty();
-        if (postId != null) postOpt = postRepository.findById(postId);
-        if (commentId != null) commentOpt = commentRepository.findById(commentId);
 
-        if ((commentOpt.isPresent() && postOpt.isPresent()) ) {
-            map.put("message", "Должен быть выставлено 1 из 2 параметров: comment, post.");
-            throw new GeneralException(HttpStatus.NOT_FOUND, map);
-        }
-        if ((commentOpt.isEmpty() && postOpt.isEmpty()) ) {
-            map.put("message", "Не было найдено связанного post или comment.");
-            throw new GeneralException(HttpStatus.BAD_REQUEST, map);
-        }
-        Comment comment = commentOpt.orElse(null);
-        Post post = postOpt.orElse(null);
-
-        return Pair.of(comment, post);
-    }
 }

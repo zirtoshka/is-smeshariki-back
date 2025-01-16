@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class CommentWithChildrenResponse extends CommentResponse {
-    protected Boolean hasChildren;
+public class PostWithCarrotsResponse extends PostResponse {
     protected Long countCarrots;
 }

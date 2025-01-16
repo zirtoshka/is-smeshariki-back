@@ -2,6 +2,7 @@ package itma.smesharikiback.controllers;
 
 import itma.smesharikiback.response.PaginatedResponse;
 import itma.smesharikiback.response.PostResponse;
+import itma.smesharikiback.response.PostWithCarrotsResponse;
 import itma.smesharikiback.services.PostService;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -34,7 +35,7 @@ public class PostController {
     }
 
     @GetMapping
-    public @NotNull PaginatedResponse<PostResponse> getAll(
+    public @NotNull PaginatedResponse<PostWithCarrotsResponse> getAll(
             @RequestParam(required = false, defaultValue = "") String filter,
             @RequestParam(required = false, defaultValue = "publicationDate") String sortField,
             @RequestParam(required = false, defaultValue = "true") @NotNull Boolean ascending,

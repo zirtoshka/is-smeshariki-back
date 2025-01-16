@@ -7,9 +7,11 @@ import io.minio.errors.MinioException;
 import itma.smesharikiback.config.PaginationSpecification;
 import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.Post;
+import itma.smesharikiback.models.dto.PostWithCarrotsDto;
 import itma.smesharikiback.models.reposirories.PostRepository;
 import itma.smesharikiback.response.PaginatedResponse;
 import itma.smesharikiback.response.PostResponse;
+import itma.smesharikiback.response.PostWithCarrotsResponse;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -56,17 +58,17 @@ public class PostService {
         return buildResponse(postRepository.save(post));
     }
 
-    public PostResponse get(Long id) {
-        Post post = postRepository.findById(id).orElse(null);
+    public PostWithCarrotsResponse get(Long id) {
+        PostWithCarrotsDto post = postRepository.findByIdWithCarrots(id).orElse(null);
         if (post == null) {
             HashMap<String, String> map = new HashMap<>();
             map.put("message", "Post не найден.");
             throw new GeneralException(HttpStatus.NOT_FOUND, map);
         }
-        return buildResponse(post);
+        return buildResponseWithCarrots(post);
     }
 
-    public @NotNull PaginatedResponse<PostResponse> getAll(
+    public @NotNull PaginatedResponse<PostWithCarrotsResponse> getAll(
             String filter,
             String sortField,
             @NotNull Boolean ascending,
@@ -79,11 +81,11 @@ public class PostService {
                 ascending ? Sort.by(sortField).ascending() : Sort.by(sortField).descending()
         );
 
-        Page<Post> resultPage = postRepository.findAll(
+        Page<PostWithCarrotsDto> resultPage = postRepository.findPostsWithCarrots(
                 PaginationSpecification.filterByMultipleFields(filter), pageRequest);
 
-        List<PostResponse> content = resultPage.getContent().stream()
-                .map(this::buildResponse)
+        List<PostWithCarrotsResponse> content = resultPage.getContent().stream()
+                .map(this::buildResponseWithCarrots)
                 .collect(Collectors.toList());
 
         return new PaginatedResponse<>(
@@ -99,6 +101,20 @@ public class PostService {
         return new PostResponse()
                 .setId(post.getId())
                 .setAuthor(post.getAuthor().getId())
+                .setCreationDate(post.getCreationDate())
+                .setText(post.getText())
+                .setIsDraft(post.getIsDraft())
+                .setIsPrivate(post.getIsPrivate())
+                .setPathToImage(post.getPathToImage())
+                .setPublicationDate(post.getPublicationDate());
+    }
+
+    public PostWithCarrotsResponse buildResponseWithCarrots(PostWithCarrotsDto post) {
+        PostWithCarrotsResponse response = new PostWithCarrotsResponse();
+        response.setCountCarrots(post.getCountCarrots());
+        return (PostWithCarrotsResponse) response
+                .setId(post.getId())
+                .setAuthor(post.getAuthor())
                 .setCreationDate(post.getCreationDate())
                 .setText(post.getText())
                 .setIsDraft(post.getIsDraft())

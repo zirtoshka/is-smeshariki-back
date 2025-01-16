@@ -15,4 +15,5 @@ public class CommentWithChildrenDto {
     private Long parentComment;
     private String text;
     private boolean hasChildren;
+    private Long countCarrots;
 }

@@ -2,6 +2,8 @@ package itma.smesharikiback.controllers;
 
 import io.jsonwebtoken.JwtException;
 import itma.smesharikiback.exceptions.GeneralException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
@@ -42,6 +44,13 @@ public class ExceptionAdvice {
     public ResponseEntity<?> jwtException(JwtException ignoredE) {
         Map<String, String> errors = new HashMap<>();
         errors.put("message", "Неверный токен!");
+        return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<?> dataIntegrityViolationException(DataIntegrityViolationException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", "Неверный запрос!");
         return ResponseEntity.badRequest().body(errors);
     }
 

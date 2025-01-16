@@ -18,16 +18,22 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpec
 
     @Query("SELECT new itma.smesharikiback.models.dto.CommentWithChildrenDto(c.id, c.smesharik.id, c.post.id, " +
             "c.creationDate, c.parentComment.id, c.text, " +
-            "CASE WHEN EXISTS (SELECT 1 FROM Comment c2 WHERE c2.parentComment = c) THEN true ELSE false END) " +
+            "CASE WHEN EXISTS (SELECT 1 FROM Comment c2 WHERE c2.parentComment = c) THEN true ELSE false END, " +
+            "COUNT(cl)) " +
             "FROM Comment c " +
-            "WHERE c.id = :id")
+            "LEFT JOIN Carrot cl ON cl.comment = c " +
+            "WHERE c.id = :id " +
+            "GROUP BY c.id")
     Optional<CommentWithChildrenDto> findByIdWithChildren(Long id);
 
     @Query("SELECT new itma.smesharikiback.models.dto.CommentWithChildrenDto(c.id, c.smesharik.id, c.post.id, " +
             "c.creationDate, c.parentComment.id, c.text, " +
-            "CASE WHEN EXISTS (SELECT 1 FROM Comment c2 WHERE c2.parentComment = c) THEN true ELSE false END) " +
+            "CASE WHEN EXISTS (SELECT 1 FROM Comment c2 WHERE c2.parentComment = c) THEN true ELSE false END, " +
+            "COUNT(cl) ) " +
             "FROM Comment c " +
-            "WHERE (c.post = :post OR c.parentComment = :comment) " +
+            "LEFT JOIN Carrot cl ON cl.comment = c " +
+            "WHERE c.post = :post OR c.parentComment = :comment " +
+            "GROUP BY c.id " +
             "ORDER BY c.creationDate DESC")
     Page<CommentWithChildrenDto> findCommentsByPostOrParentComment(Post post, Comment comment, Pageable pageRequest);
 

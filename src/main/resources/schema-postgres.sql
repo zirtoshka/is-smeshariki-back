@@ -115,7 +115,9 @@ CREATE table if not exists carrot
     comment_id    BIGINT REFERENCES comment (id) ON DELETE CASCADE,
     creation_date TIMESTAMP NOT null default current_timestamp,
     CHECK (post_id IS NOT NULL OR comment_id IS NOT NULL),
-    CHECK (post_id IS NULL OR comment_id IS NULL)
+    CHECK (post_id IS NULL OR comment_id IS NULL),
+    CONSTRAINT unique_carrot_post UNIQUE (smesharik_id, post_id),
+    CONSTRAINT unique_carrot_comment UNIQUE (smesharik_id, comment_id)
 );
 
 CREATE TABLE if not exists application_for_treatment
@@ -186,3 +188,7 @@ CREATE INDEX comment_creation_date_idx ON comment (creation_date);
 CREATE INDEX comment_post_idx ON comment(post_id);
 CREATE INDEX comment_parent_comment_idx ON comment(comment_id);
 
+CREATE INDEX carrot_comment_idx ON carrot(comment_id);
+CREATE INDEX carrot_post_idx ON carrot(post_id);
+
+CREATE INDEX post_publication_date_idx on post(publication_date)

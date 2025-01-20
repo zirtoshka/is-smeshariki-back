@@ -23,7 +23,7 @@ public class Friend {
     @JoinColumn(name = "follower_id", nullable = false)
     private Smesharik follower;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private FriendStatus status = FriendStatus.NEW;
+    @Enumerated(EnumType.STRING)
+    private FriendStatus status;
 }

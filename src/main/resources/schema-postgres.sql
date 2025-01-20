@@ -27,9 +27,9 @@ CREATE type general_status AS ENUM ('NEW', 'IN_PROGRESS', 'DONE', 'CANCELED');
 CREATE TYPE violation_type AS ENUM ('SPAM', 'EROTIC_CONTENT', 'VIOLENCE', 'HONEY', 'FRAUD_OR_MISLEADING');
 
 CREATE CAST (varchar AS smesharik_role) WITH INOUT AS IMPLICIT;
-CREATE CAST (varchar AS friend_status) WITH INOUT AS IMPLICIT;
 CREATE CAST (varchar AS general_status) WITH INOUT AS IMPLICIT;
 CREATE CAST (varchar AS violation_type) WITH INOUT AS IMPLICIT;
+CREATE CAST (varchar AS friend_status) WITH INOUT AS IMPLICIT;
 
 CREATE table if not exists smesharik
 (
@@ -191,4 +191,8 @@ CREATE INDEX comment_parent_comment_idx ON comment(comment_id);
 CREATE INDEX carrot_comment_idx ON carrot(comment_id);
 CREATE INDEX carrot_post_idx ON carrot(post_id);
 
-CREATE INDEX post_publication_date_idx on post(publication_date)
+CREATE INDEX post_publication_date_idx on post(publication_date);
+CREATE INDEX post_author_idx ON post (author_id);
+
+CREATE INDEX friend_follower_idx ON friend (follower_id);
+CREATE INDEX friend_followee_idx ON friend (followee_id);

@@ -103,6 +103,15 @@ public class SmesharikService {
         return smesharik;
     }
 
+    public Smesharik getSmesharik(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> {
+                    HashMap<String, String> errors = new HashMap<>();
+                    errors.put("followee", "Followee не был найден.");
+                    return new GeneralException(HttpStatus.BAD_REQUEST, errors);
+                });
+    }
+
     public Smesharik getByLogin(String login) {
         return repository.findByLogin(login)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));

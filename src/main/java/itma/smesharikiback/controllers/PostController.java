@@ -34,15 +34,15 @@ public class PostController {
         return postService.get(id);
     }
 
-    @GetMapping
-    public @NotNull PaginatedResponse<PostWithCarrotsResponse> getAll(
+    @GetMapping("/feed")
+    public @NotNull PaginatedResponse<PostWithCarrotsResponse> feed(
             @RequestParam(required = false, defaultValue = "") String filter,
             @RequestParam(required = false, defaultValue = "publicationDate") String sortField,
             @RequestParam(required = false, defaultValue = "true") @NotNull Boolean ascending,
             @RequestParam(required = false, defaultValue = "0") @Min(value = 0) Integer page,
             @RequestParam(required = false, defaultValue = "10") @Min(value = 1) @Max(value = 50) Integer size
     ) {
-        return postService.getAll(filter, sortField, ascending, page, size);
+        return postService.feed(filter, sortField, ascending, page, size);
     }
 
     @GetMapping("/download")

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,5 +36,17 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
             "FROM Post p " +
             "LEFT JOIN Carrot cl ON cl.post = p " +
             "GROUP BY p.id")
-    Page<PostWithCarrotsDto> findPostsWithCarrots(Specification<Post> specification, Pageable pageable);
+    Page<PostWithCarrotsDto> findPosts(Specification<Post> specification, Pageable pageable);
+
+    @Query("SELECT new itma.smesharikiback.models.dto.PostWithCarrotsDto(p.id, p.author.id, p.isDraft, " +
+            "p.text, p.isPrivate, p.publicationDate, p.pathToImage, p.creationDate, COUNT(cl)) " +
+            "FROM Post p " +
+            "LEFT JOIN Carrot cl ON cl.post = p " +
+            "WHERE EXISTS (" +
+            "  SELECT 1 FROM Friend f WHERE (f.follower = :currentSmesharik OR f.followee = :currentSmesharik) " +
+            "  AND f.status = 'NEW' AND (p.author = f.follower OR p.author = f.followee)" +
+            ") AND p.isPrivate = false " +
+            "GROUP BY p.id")
+    Page<PostWithCarrotsDto> findPublicPostsByFriends(@Param("currentSmesharik") Smesharik currentSmesharik, Specification<Post> specification, Pageable pageable);
+
 }

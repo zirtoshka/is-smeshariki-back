@@ -7,6 +7,7 @@ import io.minio.errors.MinioException;
 import itma.smesharikiback.config.PaginationSpecification;
 import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.Post;
+import itma.smesharikiback.models.SmesharikRole;
 import itma.smesharikiback.models.dto.PostWithCarrotsDto;
 import itma.smesharikiback.models.reposirories.PostRepository;
 import itma.smesharikiback.response.PaginatedResponse;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,10 +33,7 @@ import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,6 +41,7 @@ import java.util.stream.Collectors;
 public class PostService {
     private final SmesharikService smesharikService;
     private final PostRepository postRepository;
+    private final FriendService friendService;
     private MinioClient minioClient;
     private String bucketName;
 
@@ -59,16 +59,27 @@ public class PostService {
     }
 
     public PostWithCarrotsResponse get(Long id) {
+        HashMap<String, String> map = new HashMap<>();
         PostWithCarrotsDto post = postRepository.findByIdWithCarrots(id).orElse(null);
-        if (post == null) {
-            HashMap<String, String> map = new HashMap<>();
+
+        try {
+            if (post == null ||
+                    !(smesharikService.getCurrentSmesharik().getRole().equals(SmesharikRole.ADMIN) ||
+                            friendService.areFriends(post.getAuthor(), smesharikService.getCurrentSmesharik().getId()) ||
+                            post.getAuthor().equals(smesharikService.getCurrentSmesharik().getId()))
+            ) {
+                map.put("message", "Post не доступен.");
+                throw new GeneralException(HttpStatus.NOT_FOUND, map);
+            }
+        } catch (NullPointerException e) {
             map.put("message", "Post не найден.");
             throw new GeneralException(HttpStatus.NOT_FOUND, map);
         }
+
         return buildResponseWithCarrots(post);
     }
 
-    public @NotNull PaginatedResponse<PostWithCarrotsResponse> getAll(
+    public @NotNull PaginatedResponse<PostWithCarrotsResponse> feed(
             String filter,
             String sortField,
             @NotNull Boolean ascending,
@@ -81,8 +92,16 @@ public class PostService {
                 ascending ? Sort.by(sortField).ascending() : Sort.by(sortField).descending()
         );
 
-        Page<PostWithCarrotsDto> resultPage = postRepository.findPostsWithCarrots(
-                PaginationSpecification.filterByMultipleFields(filter), pageRequest);
+        Page<PostWithCarrotsDto> resultPage;
+        if (smesharikService.getCurrentSmesharik().getRole().equals(SmesharikRole.ADMIN)) {
+            resultPage = postRepository.findPosts(
+                    PaginationSpecification.filterByMultipleFields(filter), pageRequest);
+        } else {
+            resultPage = postRepository.findPublicPostsByFriends(
+                    smesharikService.getCurrentSmesharik(),
+                    PaginationSpecification.filterByMultipleFields(filter), pageRequest);
+        }
+
 
         List<PostWithCarrotsResponse> content = resultPage.getContent().stream()
                 .map(this::buildResponseWithCarrots)

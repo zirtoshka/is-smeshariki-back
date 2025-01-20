@@ -44,7 +44,11 @@ public class CommentService {
         if (post == null) smesharik = findPostAuthorByComment(comment1);
         else smesharik = post.getAuthor();
 
-        if (!commonService.isFriendsOrAdmin(smesharik.getId(), smesharikService.getCurrentSmesharik().getId())) {}
+        if (!commonService.isFriendsOrAdmin(smesharik.getId(), smesharikService.getCurrentSmesharik().getId())) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put("message", "Нельзя написать коммент здесь.");
+            throw new GeneralException(HttpStatus.NOT_FOUND, map);
+        }
 
         comment.setPost(post);
         comment.setParentComment(comment1);

@@ -23,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -45,6 +46,7 @@ public class PostService {
     private MinioClient minioClient;
     private String bucketName;
 
+    @Transactional
     public PostResponse create(MultipartFile file, Boolean isDraft, Boolean pprivate, String text) {
         String fileName = uploadImage(file);
         Post post = new Post();
@@ -58,6 +60,7 @@ public class PostService {
         return buildResponse(postRepository.save(post));
     }
 
+    @Transactional
     public PostWithCarrotsResponse get(Long id) {
         HashMap<String, String> map = new HashMap<>();
         PostWithCarrotsDto post = postRepository.findByIdWithCarrots(id).orElse(null);
@@ -76,6 +79,39 @@ public class PostService {
         return buildResponseWithCarrots(post);
     }
 
+    public @NotNull PaginatedResponse<PostWithCarrotsResponse> diary(
+            String filter,
+            String sortField,
+            @NotNull Boolean ascending,
+            @Min(value = 0) Integer page,
+            @Min(value = 3) @Max(value = 50) Integer size
+    ) {
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                size,
+                ascending ? Sort.by(sortField).ascending() : Sort.by(sortField).descending()
+        );
+
+        Page<PostWithCarrotsDto> resultPage = postRepository.findPostsByAuthorWithCarrots(
+                smesharikService.getCurrentSmesharik(),
+                PaginationSpecification.filterByMultipleFields(filter),
+                pageRequest
+        );
+
+        List<PostWithCarrotsResponse> content = resultPage.getContent().stream()
+                .map(this::buildResponseWithCarrots)
+                .collect(Collectors.toList());
+
+        return new PaginatedResponse<>(
+                content,
+                resultPage.getTotalPages(),
+                resultPage.getTotalElements(),
+                resultPage.getNumber(),
+                resultPage.getSize()
+        );
+    }
+
+    @Transactional
     public @NotNull PaginatedResponse<PostWithCarrotsResponse> feed(
             String filter,
             String sortField,

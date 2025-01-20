@@ -4,6 +4,7 @@ import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.Carrot;
 import itma.smesharikiback.models.Comment;
 import itma.smesharikiback.models.Post;
+import itma.smesharikiback.models.Smesharik;
 import itma.smesharikiback.models.reposirories.CarrotRepository;
 import itma.smesharikiback.response.CarrotResponse;
 import lombok.AllArgsConstructor;
@@ -21,12 +22,23 @@ public class CarrotService {
     private final CarrotRepository carrotRepository;
     private final CommonService commonService;
     private final SmesharikService smesharikService;
+    private final CommentService commentService;
 
     public CarrotResponse create(Long post, Long comment) {
         Carrot carrot = new Carrot();
         Pair<Comment, Post> pair = commonService.getParentCommentOrPost(comment, post);
         Post parentPost = pair.getRight();
         Comment parentComment = pair.getLeft();
+
+        Smesharik smesharik;
+        if (post == null) smesharik = commentService.findPostAuthorByComment(parentComment);
+        else smesharik = parentPost.getAuthor();
+
+        if (!commonService.isFriendsOrAdmin(smesharik.getId(), smesharikService.getCurrentSmesharik().getId())) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put("message", "Нельзя ставить лайки под постами не друзей.");
+            throw new GeneralException(HttpStatus.BAD_REQUEST, map);
+        }
 
         carrot.setSmesharik(smesharikService.getCurrentSmesharik());
         carrot.setPost(parentPost);

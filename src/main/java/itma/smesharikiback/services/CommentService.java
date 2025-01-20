@@ -59,7 +59,7 @@ public class CommentService {
         return buildResponse(commentRepository.save(comment));
     }
 
-    private Smesharik findPostAuthorByComment(Comment comment) throws GeneralException {
+    public Smesharik findPostAuthorByComment(Comment comment) throws GeneralException {
         if (!Objects.isNull(comment.getParentComment())) {
             return findPostAuthorByComment(comment.getParentComment());
         }

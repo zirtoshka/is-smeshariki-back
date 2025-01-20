@@ -45,6 +45,17 @@ public class PostController {
         return postService.feed(filter, sortField, ascending, page, size);
     }
 
+    @GetMapping("/diary")
+    public @NotNull PaginatedResponse<PostWithCarrotsResponse> diary(
+            @RequestParam(required = false, defaultValue = "") String filter,
+            @RequestParam(required = false, defaultValue = "publicationDate") String sortField,
+            @RequestParam(required = false, defaultValue = "true") @NotNull Boolean ascending,
+            @RequestParam(required = false, defaultValue = "0") @Min(value = 0) Integer page,
+            @RequestParam(required = false, defaultValue = "10") @Min(value = 1) @Max(value = 50) Integer size
+    ) {
+        return postService.diary(filter, sortField, ascending, page, size);
+    }
+
     @GetMapping("/download")
     public @NotNull ResponseEntity<?> downloadImage(@RequestParam String fileName) {
         return postService.downloadImage(fileName);

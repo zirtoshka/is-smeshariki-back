@@ -3,6 +3,7 @@ package itma.smesharikiback.services;
 import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.Comment;
 import itma.smesharikiback.models.Post;
+import itma.smesharikiback.models.Smesharik;
 import itma.smesharikiback.models.dto.CommentWithChildrenDto;
 import itma.smesharikiback.models.reposirories.CommentRepository;
 import itma.smesharikiback.models.reposirories.PostRepository;
@@ -21,24 +22,29 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor(onConstructor_ = {@Autowired})
 public class CommentService {
     private final SmesharikService smesharikService;
+    private final FriendService friendService;
     private final CommentRepository commentRepository;
     private final CommonService commonService;
 
     public CommentResponse create(CommentRequest request) throws GeneralException {
         Pair<Comment, Post> pair = commonService.getParentCommentOrPost(request.getParentComment(), request.getPost());
+
         Comment comment = new Comment();
         Post post = pair.getRight();
         Comment comment1 = pair.getLeft();
+
+        Smesharik smesharik;
+        if (post == null) smesharik = findPostAuthorByComment(comment1);
+        else smesharik = post.getAuthor();
+
+        if (!commonService.isFriendsOrAdmin(smesharik.getId(), smesharikService.getCurrentSmesharik().getId())) {}
 
         comment.setPost(post);
         comment.setParentComment(comment1);
@@ -49,7 +55,12 @@ public class CommentService {
         return buildResponse(commentRepository.save(comment));
     }
 
-
+    private Smesharik findPostAuthorByComment(Comment comment) throws GeneralException {
+        if (!Objects.isNull(comment.getParentComment())) {
+            return findPostAuthorByComment(comment.getParentComment());
+        }
+        return comment.getPost().getAuthor();
+    }
 
     private CommentResponse buildResponse(Comment comment) {
         CommentResponse response = new CommentResponse();

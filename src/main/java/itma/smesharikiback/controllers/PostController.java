@@ -21,12 +21,12 @@ public class PostController {
 
     @PostMapping(consumes = MULTIPART_FORM_DATA)
     public @NotNull PostResponse uploadImage(
-            @RequestParam("imageFile") MultipartFile file,
+            @RequestParam(required = false) MultipartFile imageFile,
             @RequestParam(required = false, defaultValue = "true") Boolean isDraft,
-            @RequestParam(required = false, defaultValue = "true") Boolean pprivate,
+            @RequestParam(required = false, defaultValue = "true") Boolean isPrivate,
             @RequestParam @Size(max = 4096, message = "Длина text до 4096.") @NotEmpty String text
     ) {
-        return postService.create(file, isDraft, pprivate, text);
+        return postService.create(imageFile, isDraft, isPrivate, text);
     }
 
     @GetMapping("/{id}")

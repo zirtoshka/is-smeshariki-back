@@ -22,7 +22,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,6 +41,7 @@ public class PostService {
     private final SmesharikService smesharikService;
     private final PostRepository postRepository;
     private final FriendService friendService;
+    private final CommonService commonService;
     private MinioClient minioClient;
     private String bucketName;
 
@@ -63,11 +63,8 @@ public class PostService {
         PostWithCarrotsDto post = postRepository.findByIdWithCarrots(id).orElse(null);
 
         try {
-            if (post == null ||
-                    !(smesharikService.getCurrentSmesharik().getRole().equals(SmesharikRole.ADMIN) ||
-                            friendService.areFriends(post.getAuthor(), smesharikService.getCurrentSmesharik().getId()) ||
-                            post.getAuthor().equals(smesharikService.getCurrentSmesharik().getId()))
-            ) {
+            if (post == null || !commonService.isFriendsOrAdmin(post.getAuthor(), smesharikService.getCurrentSmesharik().getId()))
+            {
                 map.put("message", "Post не доступен.");
                 throw new GeneralException(HttpStatus.NOT_FOUND, map);
             }
@@ -97,7 +94,7 @@ public class PostService {
             resultPage = postRepository.findPosts(
                     PaginationSpecification.filterByMultipleFields(filter), pageRequest);
         } else {
-            resultPage = postRepository.findPublicPostsByFriends(
+            resultPage = postRepository.findPublicPostsForSmesharik(
                     smesharikService.getCurrentSmesharik(),
                     PaginationSpecification.filterByMultipleFields(filter), pageRequest);
         }
@@ -143,6 +140,7 @@ public class PostService {
     }
 
     public String uploadImage(MultipartFile file) {
+        if (file == null) return null;
         HashMap<String, String> errors = new HashMap<>();
         imageValid(file);
         String originalFileName = file.getOriginalFilename();

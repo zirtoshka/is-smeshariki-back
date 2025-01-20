@@ -1,12 +1,16 @@
 package itma.smesharikiback.services;
 
+import itma.smesharikiback.config.PaginationSpecification;
 import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.Comment;
 import itma.smesharikiback.models.Post;
+import itma.smesharikiback.models.SmesharikRole;
+import itma.smesharikiback.models.dto.PostWithCarrotsDto;
 import itma.smesharikiback.models.reposirories.CommentRepository;
 import itma.smesharikiback.models.reposirories.PostRepository;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +22,15 @@ import java.util.Optional;
 public class CommonService {
     protected CommentRepository commentRepository;
     protected PostRepository postRepository;
+    protected SmesharikService smesharikService;
+    protected FriendService friendService;
+
+
+    public Boolean isFriendsOrAdmin(Long authorId, Long userId) {
+        return (authorId.equals(userId) ||
+                smesharikService.getCurrentSmesharik().getRole().equals(SmesharikRole.ADMIN) ||
+                friendService.areFriends(authorId, userId));
+    }
 
     public Pair<Comment, Post> getParentCommentOrPost(Long commentId, Long postId) {
         HashMap<String, String> map = new HashMap<>();

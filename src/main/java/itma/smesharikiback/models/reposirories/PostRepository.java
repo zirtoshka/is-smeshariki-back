@@ -51,11 +51,13 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
             "p.text, p.isPrivate, p.publicationDate, p.pathToImage, p.creationDate, COUNT(cl)) " +
             "FROM Post p " +
             "LEFT JOIN Carrot cl ON cl.post = p " +
-            "WHERE p.isPrivate = false AND p.isDraft = false AND p.author != :currentSmesharik AND EXISTS (" +
-            "  SELECT 1 FROM Friend f WHERE " +
-            " ((f.follower = :currentSmesharik OR f.followee = :currentSmesharik) " +
-            "  AND f.status = 'FRIENDS' AND (p.author = f.follower OR p.author = f.followee)" +
-            ")) " +
+            "LEFT JOIN PostBan b ON p.id = b.id " +
+            "WHERE p.isPrivate = false " +
+            "AND p.isDraft = false " +
+            "AND p.author != :currentSmesharik " +
+            "AND (b.endDate <= current_timestamp OR b.id IS NULL) " +
+            "AND EXISTS (SELECT 1 FROM Friend f WHERE (f.follower = :currentSmesharik OR f.followee = :currentSmesharik) " +
+            "AND f.status = 'FRIENDS' AND (f.follower = p.author OR f.followee = p.author)) " +
             "GROUP BY p.id")
     Page<PostWithCarrotsDto> findPublicPostsForSmesharik(@Param("currentSmesharik") Smesharik currentSmesharik, Specification<Post> specification, Pageable pageable);
 

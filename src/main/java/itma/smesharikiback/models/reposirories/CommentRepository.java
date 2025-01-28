@@ -32,7 +32,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpec
             "COUNT(cl) ) " +
             "FROM Comment c " +
             "LEFT JOIN Carrot cl ON cl.comment = c " +
-            "WHERE c.post = :post OR c.parentComment = :comment " +
+            "LEFT JOIN CommentBan b ON c.id = b.id " +
+            "WHERE (b.endDate <= current_timestamp OR b.id IS NULL) " +
+            "AND (c.post = :post OR c.parentComment = :comment) " +
             "GROUP BY c.id " +
             "ORDER BY c.creationDate DESC")
     Page<CommentWithChildrenDto> findCommentsByPostOrParentComment(Post post, Comment comment, Pageable pageRequest);

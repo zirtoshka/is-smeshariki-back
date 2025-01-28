@@ -26,7 +26,7 @@ public class AuthenticationService {
                 .setPassword(passwordEncoder.encode(request.getPassword()))
                 .setEmail(request.getEmail())
                 .setLogin(request.getLogin())
-                .setRole(SmesharikRole.USER);
+                .setRole(request.getRole());
 
         smesharikService.create(user);
 

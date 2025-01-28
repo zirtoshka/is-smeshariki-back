@@ -52,6 +52,7 @@ public class SmesharikService {
         HashMap<String, String> errors = new HashMap<>();
         Smesharik smesharik = getByLoginPermissions(login);
         smesharik.setName(request.getName());
+        smesharik.setRole(request.getRole());
         Optional<Smesharik> smesharik1 = repository.findByLogin(login);
         if (smesharik1.isPresent() && !smesharik1.get().equals(smesharik)) {
             errors.put("login", "Такой login уже занят.");
@@ -107,7 +108,7 @@ public class SmesharikService {
         return repository.findById(id)
                 .orElseThrow(() -> {
                     HashMap<String, String> errors = new HashMap<>();
-                    errors.put("followee", "Followee не был найден.");
+                    errors.put("message", "Смешарик не был найден.");
                     return new GeneralException(HttpStatus.BAD_REQUEST, errors);
                 });
     }

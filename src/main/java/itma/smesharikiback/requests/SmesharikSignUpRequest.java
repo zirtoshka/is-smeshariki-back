@@ -1,5 +1,6 @@
 package itma.smesharikiback.requests;
 
+import itma.smesharikiback.models.SmesharikRole;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -26,4 +27,7 @@ public class SmesharikSignUpRequest {
     @NotBlank(message = "email не может быть пустым.")
     @Size(min = 4, max = 128, message = "Длина email от 4 до 128.")
     private String email;
+
+    @NotNull(message = "role не может быть null.")
+    private SmesharikRole role;
 }

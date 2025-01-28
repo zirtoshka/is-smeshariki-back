@@ -42,10 +42,25 @@ public class FriendController {
 
     @GetMapping
     public PaginatedResponse<FriendResponse> getFriends(
-            @RequestParam Long followee,
             @RequestParam(required = false, defaultValue = "0") @Min(value = 0) Integer page,
             @RequestParam(required = false, defaultValue = "10") @Min(value = 1) @Max(value = 50) Integer size
     ) {
-        return friendService.getFriends(followee, page, size);
+        return friendService.getFriends(page, size);
+    }
+
+    @GetMapping("/followers")
+    public PaginatedResponse<FriendResponse> getFollowers(
+            @RequestParam(required = false, defaultValue = "0") @Min(value = 0) Integer page,
+            @RequestParam(required = false, defaultValue = "10") @Min(value = 1) @Max(value = 50) Integer size
+    ) {
+        return friendService.getFollowers(page, size);
+    }
+
+    @GetMapping("/follows")
+    public PaginatedResponse<FriendResponse> getFollows(
+            @RequestParam(required = false, defaultValue = "0") @Min(value = 0) Integer page,
+            @RequestParam(required = false, defaultValue = "10") @Min(value = 1) @Max(value = 50) Integer size
+    ) {
+        return friendService.getFollows(page, size);
     }
 }

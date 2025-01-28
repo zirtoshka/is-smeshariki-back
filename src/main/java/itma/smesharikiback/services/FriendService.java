@@ -59,7 +59,7 @@ public class FriendService {
 
     @Transactional
     public FriendResponse acceptFriendRequest(Long followerId, Long followeeId) {
-        Friend friendRequest = getFriendship(followerId, followeeId);
+        Friend friendRequest = getFriendship(followeeId, followerId);
 
         HashMap<String, String> errors = new HashMap<>();
         if (friendRequest.getStatus() != FriendStatus.NEW) {
@@ -77,7 +77,7 @@ public class FriendService {
 
     @Transactional
     public MessageResponse removeFriend(Long followerId, Long followeeId) {
-        Friend friend = getFriendship(followerId, followeeId);
+        Friend friend = getFriendship(followeeId, followerId);
         friendRepository.delete(friend);
         return new MessageResponse().setMessage("Друг удален.");
     }
@@ -157,18 +157,58 @@ public class FriendService {
 
     @Transactional
     public PaginatedResponse<FriendResponse> getFriends(
-            Long followeeId, @Min(value = 0) Integer page, @Min(value = 1) @Max(value = 50) Integer size
+            @Min(value = 0) Integer page, @Min(value = 1) @Max(value = 50) Integer size
+    ) {
+        Smesharik followee = smesharikService.getCurrentSmesharik();
+        return getPaginatedFriends(
+                page,
+                size,
+                FriendStatus.FRIENDS,
+                followee,
+                followee
+        );
+    }
+
+    public PaginatedResponse<FriendResponse> getFollowers(
+            @Min(value = 0) Integer page, @Min(value = 1) @Max(value = 50) Integer size
+    ) {
+        Smesharik followee = smesharikService.getCurrentSmesharik();
+
+        return getPaginatedFriends(
+                page,
+                size,
+                FriendStatus.NEW,
+                followee,
+                null
+        );
+    }
+
+    public PaginatedResponse<FriendResponse> getFollows(
+            @Min(value = 0) Integer page, @Min(value = 1) @Max(value = 50) Integer size
+    ) {
+        Smesharik follower = smesharikService.getCurrentSmesharik();
+
+        return getPaginatedFriends(
+                page,
+                size,
+                FriendStatus.NEW,
+                null,
+                follower
+        );
+    }
+
+    public PaginatedResponse<FriendResponse> getPaginatedFriends(
+            Integer page, Integer size, FriendStatus friendStatus, Smesharik followee, Smesharik follower
     ) {
         PageRequest pageRequest = PageRequest.of(
                 page,
                 size
         );
-        Smesharik followee = smesharikService.getSmesharik(followeeId);
 
         Page<Friend> resultPage = friendRepository.findByFolloweeOrFollowerAndStatus(
                 followee,
-                followee,
-                FriendStatus.FRIENDS,
+                follower,
+                friendStatus,
                 pageRequest);
 
         List<FriendResponse> content = resultPage.getContent().stream()

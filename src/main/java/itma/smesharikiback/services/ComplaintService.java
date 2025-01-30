@@ -32,6 +32,7 @@ public class ComplaintService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final SmesharikService smesharikService;
+    private final CommonService commonService;
     private ComplaintRepository complaintRepository;
 
     public ComplaintResponse createComplaint(@Validated ComplaintRequest complaintRequest) {
@@ -106,10 +107,7 @@ public class ComplaintService {
             throw new GeneralException(HttpStatus.BAD_REQUEST, errors);
         }
 
-        if (!smesharikService.getCurrentSmesharik().getRole().equals(SmesharikRole.ADMIN)) {
-            errors.put("message", "Ошибка доступа.");
-            throw new GeneralException(HttpStatus.FORBIDDEN, errors);
-        }
+        commonService.checkIfAdmin();
 
         return complaint.get();
     }

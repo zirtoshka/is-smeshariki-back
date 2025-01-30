@@ -4,6 +4,7 @@ import itma.smesharikiback.config.PaginationSpecification;
 import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.Comment;
 import itma.smesharikiback.models.Post;
+import itma.smesharikiback.models.Smesharik;
 import itma.smesharikiback.models.SmesharikRole;
 import itma.smesharikiback.models.dto.PostWithCarrotsDto;
 import itma.smesharikiback.models.reposirories.CommentRepository;
@@ -51,5 +52,13 @@ public class CommonService {
         Post post = postOpt.orElse(null);
 
         return Pair.of(comment, post);
+    }
+
+    public void checkIfAdmin() {
+        HashMap<String, String> errors = new HashMap<>();
+        if (!smesharikService.getCurrentSmesharik().getRole().equals(SmesharikRole.ADMIN)) {
+            errors.put("message", "Ошибка доступа.");
+            throw new GeneralException(HttpStatus.FORBIDDEN, errors);
+        }
     }
 }

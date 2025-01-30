@@ -125,15 +125,9 @@ public class PostService {
                 ascending ? Sort.by(sortField).ascending() : Sort.by(sortField).descending()
         );
 
-        Page<PostWithCarrotsDto> resultPage;
-        if (smesharikService.getCurrentSmesharik().getRole().equals(SmesharikRole.ADMIN)) {
-            resultPage = postRepository.findPosts(
-                    PaginationSpecification.filterByMultipleFields(filter), pageRequest);
-        } else {
-            resultPage = postRepository.findPublicPostsForSmesharik(
+        Page<PostWithCarrotsDto> resultPage = postRepository.findPublicPostsForSmesharik(
                     smesharikService.getCurrentSmesharik(),
                     PaginationSpecification.filterByMultipleFields(filter), pageRequest);
-        }
 
 
         List<PostWithCarrotsResponse> content = resultPage.getContent().stream()

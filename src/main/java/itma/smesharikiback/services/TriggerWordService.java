@@ -1,17 +1,14 @@
 package itma.smesharikiback.services;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import itma.smesharikiback.config.PaginationSpecification;
 import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.Propensity;
 import itma.smesharikiback.models.TriggerWord;
 import itma.smesharikiback.models.reposirories.PropensityRepository;
 import itma.smesharikiback.models.reposirories.TriggerWordRepository;
-import itma.smesharikiback.requests.PropensityRequest;
 import itma.smesharikiback.requests.TriggerWordRequest;
 import itma.smesharikiback.response.MessageResponse;
 import itma.smesharikiback.response.PaginatedResponse;
-import itma.smesharikiback.response.PropensityResponse;
 import itma.smesharikiback.response.TriggerWordResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;

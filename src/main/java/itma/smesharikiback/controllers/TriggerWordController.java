@@ -1,6 +1,5 @@
 package itma.smesharikiback.controllers;
 
-import itma.smesharikiback.requests.PropensityRequest;
 import itma.smesharikiback.requests.TriggerWordRequest;
 import itma.smesharikiback.response.MessageResponse;
 import itma.smesharikiback.response.PaginatedResponse;

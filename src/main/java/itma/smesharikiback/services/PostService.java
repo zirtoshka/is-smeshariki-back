@@ -7,7 +7,6 @@ import io.minio.errors.MinioException;
 import itma.smesharikiback.config.PaginationSpecification;
 import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.Post;
-import itma.smesharikiback.models.SmesharikRole;
 import itma.smesharikiback.models.dto.PostWithCarrotsDto;
 import itma.smesharikiback.models.reposirories.PostRepository;
 import itma.smesharikiback.response.PaginatedResponse;

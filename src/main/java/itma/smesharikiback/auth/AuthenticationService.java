@@ -1,7 +1,6 @@
 package itma.smesharikiback.auth;
 
 import itma.smesharikiback.models.Smesharik;
-import itma.smesharikiback.models.SmesharikRole;
 import itma.smesharikiback.requests.SmesharikSignInRequest;
 import itma.smesharikiback.requests.SmesharikSignUpRequest;
 import itma.smesharikiback.services.SmesharikService;

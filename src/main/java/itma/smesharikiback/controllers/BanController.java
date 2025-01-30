@@ -2,7 +2,6 @@ package itma.smesharikiback.controllers;
 
 import itma.smesharikiback.requests.BanRequest;
 import itma.smesharikiback.response.BanResponse;
-import itma.smesharikiback.response.CarrotResponse;
 import itma.smesharikiback.response.MessageResponse;
 import itma.smesharikiback.response.PaginatedResponse;
 import itma.smesharikiback.services.BanService;

@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +39,11 @@ public class SmesharikService {
         }
         if (repository.existsByEmail(smesharik.getEmail())) {
             errors.put("email", "Пользователь с таким email уже существует");
+        }
+
+        String regex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}$";
+        if (!Pattern.matches(regex, smesharik.getEmail())) {
+            errors.put("email", "Передан некорректный email.");
         }
 
         if (!errors.isEmpty()) {

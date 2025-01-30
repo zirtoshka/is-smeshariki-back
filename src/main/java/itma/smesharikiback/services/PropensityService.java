@@ -2,11 +2,9 @@ package itma.smesharikiback.services;
 
 import itma.smesharikiback.config.PaginationSpecification;
 import itma.smesharikiback.exceptions.GeneralException;
-import itma.smesharikiback.models.Complaint;
 import itma.smesharikiback.models.Propensity;
 import itma.smesharikiback.models.reposirories.PropensityRepository;
 import itma.smesharikiback.requests.PropensityRequest;
-import itma.smesharikiback.response.ComplaintResponse;
 import itma.smesharikiback.response.MessageResponse;
 import itma.smesharikiback.response.PaginatedResponse;
 import itma.smesharikiback.response.PropensityResponse;

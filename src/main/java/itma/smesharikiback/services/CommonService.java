@@ -1,17 +1,13 @@
 package itma.smesharikiback.services;
 
-import itma.smesharikiback.config.PaginationSpecification;
 import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.Comment;
 import itma.smesharikiback.models.Post;
-import itma.smesharikiback.models.Smesharik;
 import itma.smesharikiback.models.SmesharikRole;
-import itma.smesharikiback.models.dto.PostWithCarrotsDto;
 import itma.smesharikiback.models.reposirories.CommentRepository;
 import itma.smesharikiback.models.reposirories.PostRepository;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 

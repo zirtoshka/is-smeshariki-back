@@ -6,7 +6,6 @@ import itma.smesharikiback.models.Post;
 import itma.smesharikiback.models.Smesharik;
 import itma.smesharikiback.models.dto.CommentWithChildrenDto;
 import itma.smesharikiback.models.reposirories.CommentRepository;
-import itma.smesharikiback.models.reposirories.PostRepository;
 import itma.smesharikiback.requests.CommentRequest;
 import itma.smesharikiback.response.CommentResponse;
 import itma.smesharikiback.response.CommentWithChildrenResponse;

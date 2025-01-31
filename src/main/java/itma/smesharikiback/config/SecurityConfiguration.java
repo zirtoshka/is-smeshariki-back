@@ -2,7 +2,6 @@ package itma.smesharikiback.config;
 
 
 import itma.smesharikiback.auth.JwtAuthenticationFilter;
-import itma.smesharikiback.auth.LoginPasswordAuthFilter;
 import itma.smesharikiback.services.SmesharikService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

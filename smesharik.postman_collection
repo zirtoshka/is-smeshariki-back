@@ -211,7 +211,7 @@
 								},
 								{
 									"key": "text",
-									"value": "text",
+									"value": "убить, казнить, !  курить",
 									"type": "text"
 								},
 								{
@@ -1270,7 +1270,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"ужас!\",\r\n    \"description\": \"ужас!\"\r\n}",
+							"raw": "{\r\n    \"name\": \"самовыпил\",\r\n    \"description\": \"ужас!\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1468,7 +1468,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"word\": \"ipsum\",\r\n    \"propensity\": 1\r\n}",
+							"raw": "{\r\n    \"word\": \"курить\",\r\n    \"propensity\": 1\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1629,7 +1629,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8081/api/word/1",
+							"raw": "http://localhost:8081/api/word/3",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1638,6 +1638,134 @@
 							"path": [
 								"api",
 								"word",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "application",
+			"item": [
+				{
+					"name": "get",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/application/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"application",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/application?filter&sortField=id&ascending=false&page=0&size=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"application"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": null
+								},
+								{
+									"key": "sortField",
+									"value": "id"
+								},
+								{
+									"key": "ascending",
+									"value": "false"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"post\": 1,\r\n    \"comment\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/application/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"application",
 								"1"
 							]
 						}

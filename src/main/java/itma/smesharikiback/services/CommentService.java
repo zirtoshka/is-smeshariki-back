@@ -32,6 +32,7 @@ public class CommentService {
     private final FriendService friendService;
     private final CommentRepository commentRepository;
     private final CommonService commonService;
+    private final PsychoService psychoService;
 
     public CommentResponse create(CommentRequest request) throws GeneralException {
         Pair<Comment, Post> pair = commonService.getParentCommentOrPost(request.getParentComment(), request.getPost());
@@ -44,7 +45,8 @@ public class CommentService {
         if (post == null) smesharik = findPostAuthorByComment(comment1);
         else smesharik = post.getAuthor();
 
-        if (!commonService.isFriendsOrAdmin(smesharik.getId(), smesharikService.getCurrentSmesharik().getId())) {
+        if (!commonService.isFriendsOrAdmin(smesharik.getId(), smesharikService.getCurrentSmesharik().getId()) ||
+                (post != null && (post.getIsDraft() || post.getIsPrivate()))) {
             HashMap<String, String> map = new HashMap<>();
             map.put("message", "Нельзя написать коммент здесь.");
             throw new GeneralException(HttpStatus.NOT_FOUND, map);
@@ -55,8 +57,10 @@ public class CommentService {
         comment.setText(request.getText());
         comment.setCreationDate(new Timestamp(new Date().getTime()).toLocalDateTime());
         comment.setSmesharik(smesharikService.getCurrentSmesharik());
+        CommentResponse commentResponse = buildResponse(commentRepository.save(comment));
+        psychoService.addToCommentQueue(comment);
 
-        return buildResponse(commentRepository.save(comment));
+        return commentResponse;
     }
 
     public Smesharik findPostAuthorByComment(Comment comment) throws GeneralException {

@@ -42,6 +42,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final FriendService friendService;
     private final CommonService commonService;
+    private final PsychoService psychoService;
     private MinioClient minioClient;
     private String bucketName;
 
@@ -56,7 +57,9 @@ public class PostService {
         post.setIsPrivate(pprivate);
         post.setPathToImage(fileName);
         if (!isDraft) post.setPublicationDate(new Timestamp(new Date().getTime()).toLocalDateTime());
-        return buildResponse(postRepository.save(post));
+        PostResponse postResponse = buildResponse(postRepository.save(post));
+        psychoService.addToPostQueue(post);
+        return postResponse;
     }
 
     @Transactional

@@ -57,4 +57,13 @@ public class CommonService {
             throw new GeneralException(HttpStatus.FORBIDDEN, errors);
         }
     }
+
+    public void checkIfDoctorOrAdmin() {
+        HashMap<String, String> errors = new HashMap<>();
+        if (!smesharikService.getCurrentSmesharik().getRole().equals(SmesharikRole.DOCTOR) &&
+                !smesharikService.getCurrentSmesharik().getRole().equals(SmesharikRole.ADMIN)) {
+            errors.put("message", "Ошибка доступа.");
+            throw new GeneralException(HttpStatus.FORBIDDEN, errors);
+        }
+    }
 }

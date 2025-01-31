@@ -112,7 +112,7 @@ public class BanService {
                 request.getSmesharik()
         ).filter(Objects::nonNull).count() != 1) {
             map.put("message", "Некорректный запрос.");
-            throw new GeneralException(HttpStatus.NOT_FOUND, map);
+            throw new GeneralException(HttpStatus.BAD_REQUEST, map);
         }
 
         Smesharik smesharik = null;

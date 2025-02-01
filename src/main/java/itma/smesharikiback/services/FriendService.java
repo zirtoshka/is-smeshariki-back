@@ -4,6 +4,7 @@ import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.Friend;
 import itma.smesharikiback.models.FriendStatus;
 import itma.smesharikiback.models.Smesharik;
+import itma.smesharikiback.models.SmesharikRole;
 import itma.smesharikiback.models.reposirories.FriendRepository;
 import itma.smesharikiback.models.reposirories.SmesharikRepository;
 import itma.smesharikiback.requests.FriendRequest;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
 public class FriendService {
     private final FriendRepository friendRepository;
     private final SmesharikRepository smesharikRepository;
-    private final SmesharikService smesharikService;
+    private final CommonService commonService;
 
     @Transactional
     public FriendResponse create(FriendRequest friendRequest) {
@@ -45,7 +46,7 @@ public class FriendService {
         if (areFriendsRequestExist(followee, follower)) {
             errors.put("message", "Такая заявка в друзья уже существует.");
             throw new GeneralException(HttpStatus.BAD_REQUEST, errors);
-        } else if (!follower.equals(smesharikService.getCurrentSmesharik())){
+        } else if (!follower.equals(commonService.getCurrentSmesharik())){
             errors.put("message", "Ошибка доступа.");
             throw new GeneralException(HttpStatus.FORBIDDEN, errors);
         }
@@ -66,7 +67,7 @@ public class FriendService {
             errors.put("message", "Такая заявка была обработана.");
             throw new GeneralException(HttpStatus.BAD_REQUEST, errors);
         }
-        if (friendRequest.getFollowee() != smesharikService.getCurrentSmesharik()) {
+        if (friendRequest.getFollowee() != commonService.getCurrentSmesharik()) {
             errors.put("message", "Ошибка доступа.");
             throw new GeneralException(HttpStatus.FORBIDDEN, errors);
         }
@@ -127,6 +128,12 @@ public class FriendService {
         return isExist1 || isExist2;
     }
 
+    public Boolean isFriendsOrAdmin(Long authorId, Long userId) {
+        return (authorId.equals(userId) ||
+                commonService.getCurrentSmesharik().getRole().equals(SmesharikRole.ADMIN) ||
+                areFriends(authorId, userId));
+    }
+
     public boolean areFriends(Long followeeId, Long followerId) {
         Pair<Smesharik, Smesharik> pair = getSmeshariks(
                 followeeId,
@@ -159,7 +166,7 @@ public class FriendService {
     public PaginatedResponse<FriendResponse> getFriends(
             @Min(value = 0) Integer page, @Min(value = 1) @Max(value = 50) Integer size
     ) {
-        Smesharik followee = smesharikService.getCurrentSmesharik();
+        Smesharik followee = commonService.getCurrentSmesharik();
         return getPaginatedFriends(
                 page,
                 size,
@@ -172,7 +179,7 @@ public class FriendService {
     public PaginatedResponse<FriendResponse> getFollowers(
             @Min(value = 0) Integer page, @Min(value = 1) @Max(value = 50) Integer size
     ) {
-        Smesharik followee = smesharikService.getCurrentSmesharik();
+        Smesharik followee = commonService.getCurrentSmesharik();
 
         return getPaginatedFriends(
                 page,
@@ -186,7 +193,7 @@ public class FriendService {
     public PaginatedResponse<FriendResponse> getFollows(
             @Min(value = 0) Integer page, @Min(value = 1) @Max(value = 50) Integer size
     ) {
-        Smesharik follower = smesharikService.getCurrentSmesharik();
+        Smesharik follower = commonService.getCurrentSmesharik();
 
         return getPaginatedFriends(
                 page,

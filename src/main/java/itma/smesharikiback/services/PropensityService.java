@@ -1,6 +1,6 @@
 package itma.smesharikiback.services;
 
-import itma.smesharikiback.config.PaginationSpecification;
+import itma.smesharikiback.specification.PaginationSpecification;
 import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.Propensity;
 import itma.smesharikiback.models.reposirories.PropensityRepository;

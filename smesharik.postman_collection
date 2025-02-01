@@ -35,7 +35,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"avav\",\r\n    \"login\": \"avaavф\",\r\n    \"email\": \"112314a@ya.ru\",\r\n    \"password\": \"aboba\",\r\n    \"role\": \"ADMIN\"\r\n}",
+							"raw": "{\r\n    \"name\": \"avav\",\r\n    \"login\": \"avaavф\",\r\n    \"email\": \"112314a@ya.ru\",\r\n    \"password\": \"aboba\",\r\n    \"color\": \"#111111\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -83,7 +83,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"login\": \"avaaaavф\",\r\n    \"password\": \"aboba\"\r\n}",
+							"raw": "{\r\n    \"login\": \"kopatych\",\r\n    \"password\": \"kopatych\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -127,7 +127,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"avav\",\r\n    \"login\": \"avaaavф\",\r\n    \"email\": \"1234aaaaaa@ya.ru\",\r\n    \"password\": \"aboba\",\r\n    \"role\": \"USER\"\r\n}",
+							"raw": "{\r\n    \"name\": \"avav\",\r\n    \"login\": \"avaaavф\",\r\n    \"email\": \"1234aaaaaa@ya.ru\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -135,7 +135,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8081/api/smesharik/avaaavф",
+							"raw": "http://localhost:8081/api/smesharik/avaavф",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -144,7 +144,89 @@
 							"path": [
 								"api",
 								"smesharik",
-								"avaaavф"
+								"avaavф"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "changePassword",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"oldPassword\": \"aboba\",\r\n    \"newPassword\": \"abobaa\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/smesharik/avaavф/changePassword",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"smesharik",
+								"avaavф",
+								"changePassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "changeRole",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"role\": \"DOCTOR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/smesharik/sovunya/changeRole",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"smesharik",
+								"sovunya",
+								"changeRole"
 							]
 						}
 					},
@@ -166,7 +248,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8081/api/smesharik/avaagvrrrf",
+							"raw": "http://localhost:8081/api/smesharik/sovunya",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -175,7 +257,56 @@
 							"path": [
 								"api",
 								"smesharik",
-								"avaagvrrrf"
+								"sovunya"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/smesharik?nameOrLogin&page=0&size=4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"smesharik"
+							],
+							"query": [
+								{
+									"key": "nameOrLogin",
+									"value": null
+								},
+								{
+									"key": "roles",
+									"value": "USER",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "4"
+								}
 							]
 						}
 					},
@@ -437,7 +568,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"text\": \"comment\",\r\n    \"post\": 4\r\n}",
+							"raw": "{\r\n    \"text\": \"comment полюбить\",\r\n    \"post\": 1\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

@@ -1,8 +1,10 @@
 package itma.smesharikiback.auth;
 
 import itma.smesharikiback.models.Smesharik;
-import itma.smesharikiback.requests.SmesharikSignInRequest;
-import itma.smesharikiback.requests.SmesharikSignUpRequest;
+import itma.smesharikiback.models.SmesharikRole;
+import itma.smesharikiback.requests.smesharik.SmesharikSignInRequest;
+import itma.smesharikiback.requests.smesharik.SmesharikSignUpRequest;
+import itma.smesharikiback.services.CommonService;
 import itma.smesharikiback.services.SmesharikService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
+    private final CommonService commonService;
     private final SmesharikService smesharikService;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
@@ -25,7 +28,8 @@ public class AuthenticationService {
                 .setPassword(passwordEncoder.encode(request.getPassword()))
                 .setEmail(request.getEmail())
                 .setLogin(request.getLogin())
-                .setRole(request.getRole());
+                .setColor(request.getColor())
+                .setRole(SmesharikRole.USER);
 
         smesharikService.create(user);
 
@@ -43,7 +47,7 @@ public class AuthenticationService {
                 request.getPassword()
         ));
 
-        var user = smesharikService
+        var user = commonService
                 .getByLogin(request.getLogin());
 
 

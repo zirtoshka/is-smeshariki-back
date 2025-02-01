@@ -1,7 +1,7 @@
 package itma.smesharikiback.auth;
 
-import itma.smesharikiback.requests.SmesharikSignInRequest;
-import itma.smesharikiback.requests.SmesharikSignUpRequest;
+import itma.smesharikiback.requests.smesharik.SmesharikSignInRequest;
+import itma.smesharikiback.requests.smesharik.SmesharikSignUpRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

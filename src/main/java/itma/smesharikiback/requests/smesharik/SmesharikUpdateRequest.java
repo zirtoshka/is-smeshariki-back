@@ -1,15 +1,12 @@
-package itma.smesharikiback.response;
+package itma.smesharikiback.requests.smesharik;
 
-import itma.smesharikiback.models.SmesharikRole;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 @Data
-@Accessors(chain = true)
-public class SmesharikResponse {
+public class SmesharikUpdateRequest {
     @NotNull(message = "Login не может быть null.")
     @NotBlank(message = "Login не может быть пустым.")
     @Size(min = 4, max = 64, message = "Длина login от 4 до 64.")
@@ -25,7 +22,6 @@ public class SmesharikResponse {
     @Size(min = 4, max = 128, message = "Длина email от 4 до 128.")
     private String email;
 
-    private SmesharikRole role;
-    private Boolean isOnline;
+    @Size(min = 7, max = 7, message = "Неправильное значение color.")
     private String color;
 }

@@ -2,6 +2,7 @@ package itma.smesharikiback.config;
 
 
 import itma.smesharikiback.auth.JwtAuthenticationFilter;
+import itma.smesharikiback.services.CommonService;
 import itma.smesharikiback.services.SmesharikService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +34,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final SmesharikService smesharikService;
+    private final CommonService commonService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -61,7 +62,7 @@ public class SecurityConfiguration {
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(smesharikService::getByLogin);
+        authProvider.setUserDetailsService(commonService::getByLogin);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }

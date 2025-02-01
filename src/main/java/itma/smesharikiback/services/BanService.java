@@ -1,6 +1,6 @@
 package itma.smesharikiback.services;
 
-import itma.smesharikiback.config.PaginationSpecification;
+import itma.smesharikiback.specification.PaginationSpecification;
 import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.*;
 import itma.smesharikiback.models.reposirories.BanRepository;
@@ -33,11 +33,11 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public class BanService {
 
-    private final SmesharikService smesharikService;
     private final SmesharikRepository smesharikRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final BanRepository banRepository;
+    private final CommonService commonService;
 
     @Transactional
     public BanResponse create(BanRequest request) {
@@ -51,7 +51,7 @@ public class BanService {
     public MessageResponse delete(Long ban) {
         HashMap<String, String> map = new HashMap<>();
 
-        if (!smesharikService.getCurrentSmesharik().getRole().equals(SmesharikRole.ADMIN)) {
+        if (!commonService.getCurrentSmesharik().getRole().equals(SmesharikRole.ADMIN)) {
             map.put("message", "Отказано в доступе.");
             throw new GeneralException(HttpStatus.FORBIDDEN, map);
         }
@@ -101,7 +101,7 @@ public class BanService {
     private Triple<Post, Comment, Smesharik> getValues(BanRequest request) {
         HashMap<String, String> map = new HashMap<>();
 
-        if (!smesharikService.getCurrentSmesharik().getRole().equals(SmesharikRole.ADMIN)) {
+        if (!commonService.getCurrentSmesharik().getRole().equals(SmesharikRole.ADMIN)) {
             map.put("message", "Отказано в доступе.");
             throw new GeneralException(HttpStatus.FORBIDDEN, map);
         }
@@ -132,7 +132,7 @@ public class BanService {
     public BanResponse get(Long id) {
         HashMap<String, String> map = new HashMap<>();
 
-        if (!smesharikService.getCurrentSmesharik().getRole().equals(SmesharikRole.ADMIN)) {
+        if (!commonService.getCurrentSmesharik().getRole().equals(SmesharikRole.ADMIN)) {
             map.put("message", "Отказано в доступе.");
             throw new GeneralException(HttpStatus.FORBIDDEN, map);
         }
@@ -155,7 +155,7 @@ public class BanService {
     ) {
         HashMap<String, String> map = new HashMap<>();
 
-        if (!smesharikService.getCurrentSmesharik().getRole().equals(SmesharikRole.ADMIN)) {
+        if (!commonService.getCurrentSmesharik().getRole().equals(SmesharikRole.ADMIN)) {
             map.put("message", "Отказано в доступе.");
             throw new GeneralException(HttpStatus.FORBIDDEN, map);
         }

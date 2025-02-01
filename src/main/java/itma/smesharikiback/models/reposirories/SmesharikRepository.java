@@ -3,11 +3,12 @@ package itma.smesharikiback.models.reposirories;
 
 import itma.smesharikiback.models.Smesharik;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface SmesharikRepository extends JpaRepository<Smesharik, Long> {
+public interface SmesharikRepository extends JpaRepository<Smesharik, Long>, JpaSpecificationExecutor<Smesharik> {
 
     @Query(
             "SELECT s FROM Smesharik s " +

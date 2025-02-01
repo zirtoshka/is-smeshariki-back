@@ -1,4 +1,4 @@
-package itma.smesharikiback.config;
+package itma.smesharikiback.specification;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;

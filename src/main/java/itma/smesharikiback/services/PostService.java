@@ -4,7 +4,7 @@ import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.errors.MinioException;
-import itma.smesharikiback.config.PaginationSpecification;
+import itma.smesharikiback.specification.PaginationSpecification;
 import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.Post;
 import itma.smesharikiback.models.dto.PostWithCarrotsDto;
@@ -38,11 +38,10 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class PostService {
-    private final SmesharikService smesharikService;
     private final PostRepository postRepository;
-    private final FriendService friendService;
     private final CommonService commonService;
     private final PsychoService psychoService;
+    private final FriendService friendService;
     private MinioClient minioClient;
     private String bucketName;
 
@@ -50,7 +49,7 @@ public class PostService {
     public PostResponse create(MultipartFile file, Boolean isDraft, Boolean pprivate, String text) {
         String fileName = uploadImage(file);
         Post post = new Post();
-        post.setAuthor(smesharikService.getCurrentSmesharik());
+        post.setAuthor(commonService.getCurrentSmesharik());
         post.setCreationDate(new Timestamp(new Date().getTime()).toLocalDateTime());
         post.setText(text);
         post.setIsDraft(isDraft);
@@ -68,7 +67,7 @@ public class PostService {
         PostWithCarrotsDto post = postRepository.findByIdWithCarrots(id).orElse(null);
 
         try {
-            if (post == null || !commonService.isFriendsOrAdmin(post.getAuthor(), smesharikService.getCurrentSmesharik().getId()))
+            if (post == null || !friendService.isFriendsOrAdmin(post.getAuthor(), commonService.getCurrentSmesharik().getId()))
             {
                 map.put("message", "Post не доступен.");
                 throw new GeneralException(HttpStatus.NOT_FOUND, map);
@@ -95,7 +94,7 @@ public class PostService {
         );
 
         Page<PostWithCarrotsDto> resultPage = postRepository.findPostsByAuthorWithCarrots(
-                smesharikService.getCurrentSmesharik(),
+                commonService.getCurrentSmesharik(),
                 PaginationSpecification.filterByMultipleFields(filter),
                 pageRequest
         );
@@ -128,7 +127,7 @@ public class PostService {
         );
 
         Page<PostWithCarrotsDto> resultPage = postRepository.findPublicPostsForSmesharik(
-                    smesharikService.getCurrentSmesharik(),
+                    commonService.getCurrentSmesharik(),
                     PaginationSpecification.filterByMultipleFields(filter), pageRequest);
 
 

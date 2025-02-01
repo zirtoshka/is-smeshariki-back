@@ -48,6 +48,9 @@ public class Smesharik implements UserDetails {
     @Column(nullable = false)
     private Boolean isOnline = false;
 
+    @Column(nullable = false, length = 16)
+    private String color;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

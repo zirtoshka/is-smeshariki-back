@@ -21,8 +21,8 @@ import java.util.Optional;
 public class CarrotService {
     private final CarrotRepository carrotRepository;
     private final CommonService commonService;
-    private final SmesharikService smesharikService;
     private final CommentService commentService;
+    private final FriendService friendService;
 
     public CarrotResponse create(Long post, Long comment) {
         Carrot carrot = new Carrot();
@@ -34,13 +34,13 @@ public class CarrotService {
         if (post == null) smesharik = commentService.findPostAuthorByComment(parentComment);
         else smesharik = parentPost.getAuthor();
 
-        if (!commonService.isFriendsOrAdmin(smesharik.getId(), smesharikService.getCurrentSmesharik().getId())) {
+        if (!friendService.isFriendsOrAdmin(smesharik.getId(), commonService.getCurrentSmesharik().getId())) {
             HashMap<String, String> map = new HashMap<>();
             map.put("message", "Нельзя ставить лайки под постами не друзей.");
             throw new GeneralException(HttpStatus.BAD_REQUEST, map);
         }
 
-        carrot.setSmesharik(smesharikService.getCurrentSmesharik());
+        carrot.setSmesharik(commonService.getCurrentSmesharik());
         carrot.setPost(parentPost);
         carrot.setComment(parentComment);
 
@@ -65,11 +65,11 @@ public class CarrotService {
         Optional<Carrot> carrot = Optional.empty();
         if (parentComment != null) {
             carrot = carrotRepository.findBySmesharikAndComment(
-                    smesharikService.getCurrentSmesharik(), parentComment
+                    commonService.getCurrentSmesharik(), parentComment
             );
         } else if (parentPost != null) {
             carrot = carrotRepository.findBySmesharikAndPost(
-                    smesharikService.getCurrentSmesharik(), parentPost
+                    commonService.getCurrentSmesharik(), parentPost
             );
         }
         if (carrot.isEmpty()) {

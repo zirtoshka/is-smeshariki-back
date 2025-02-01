@@ -1,6 +1,6 @@
 package itma.smesharikiback.services;
 
-import itma.smesharikiback.config.PaginationSpecification;
+import itma.smesharikiback.specification.PaginationSpecification;
 import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.ApplicationForTreatment;
 import itma.smesharikiback.models.Comment;
@@ -35,7 +35,6 @@ public class ApplicationForTreatmentService {
     private final ApplicationForTreatmentRepository applicationForTreatmentRepository;
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
-    private final SmesharikService smesharikService;
 
     public ApplicationForTreatmentResponse updateApplicationForTreatment(
             Long id,
@@ -72,7 +71,7 @@ public class ApplicationForTreatmentService {
         }
 
         applicationForTreatment.setStatus(applicationForTreatmentRequest.getStatus());
-        applicationForTreatment.setDoctor(smesharikService.getCurrentSmesharik());
+        applicationForTreatment.setDoctor(commonService.getCurrentSmesharik());
 
         return buildResponse(applicationForTreatmentRepository.save(applicationForTreatment));
     }

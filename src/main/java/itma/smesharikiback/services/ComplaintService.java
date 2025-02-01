@@ -1,6 +1,6 @@
 package itma.smesharikiback.services;
 
-import itma.smesharikiback.config.PaginationSpecification;
+import itma.smesharikiback.specification.PaginationSpecification;
 import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.*;
 import itma.smesharikiback.models.reposirories.CommentRepository;
@@ -31,7 +31,6 @@ public class ComplaintService {
     private final SmesharikRepository smesharikRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
-    private final SmesharikService smesharikService;
     private final CommonService commonService;
     private ComplaintRepository complaintRepository;
 

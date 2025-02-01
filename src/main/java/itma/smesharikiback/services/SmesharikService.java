@@ -3,27 +3,39 @@ package itma.smesharikiback.services;
 import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.Smesharik;
 import itma.smesharikiback.models.reposirories.SmesharikRepository;
-import itma.smesharikiback.requests.SmesharikUpdateRequest;
+import itma.smesharikiback.requests.smesharik.SmesharikChangePasswordRequest;
+import itma.smesharikiback.requests.smesharik.SmesharikChangeRoleRequest;
+import itma.smesharikiback.requests.smesharik.SmesharikUpdateRequest;
+import itma.smesharikiback.response.MessageResponse;
+import itma.smesharikiback.response.PaginatedResponse;
 import itma.smesharikiback.response.SmesharikResponse;
+import itma.smesharikiback.specification.SmesharikSpecification;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class SmesharikService {
     private final SmesharikRepository repository;
+    private final CommonService commonService;
+    private final FriendService friendService;
+    private final PasswordEncoder passwordEncoder;
 
     public Smesharik save(Smesharik smesharik) {
         return repository.save(smesharik);
@@ -46,6 +58,11 @@ public class SmesharikService {
             errors.put("email", "Передан некорректный email.");
         }
 
+        regex = "#[A-Fa-f0-9]{6}";
+        if (smesharik.getColor() != null && !Pattern.matches(regex, smesharik.getColor())) {
+            errors.put("color", "Передан некорректный color.");
+        }
+
         if (!errors.isEmpty()) {
             throw new GeneralException(HttpStatus.BAD_REQUEST, errors);
         }
@@ -57,8 +74,9 @@ public class SmesharikService {
     public SmesharikResponse update(SmesharikUpdateRequest request, String login) {
         HashMap<String, String> errors = new HashMap<>();
         Smesharik smesharik = getByLoginPermissions(login);
+
         smesharik.setName(request.getName());
-        smesharik.setRole(request.getRole());
+
         Optional<Smesharik> smesharik1 = repository.findByLogin(login);
         if (smesharik1.isPresent() && !smesharik1.get().equals(smesharik)) {
             errors.put("login", "Такой login уже занят.");
@@ -71,7 +89,6 @@ public class SmesharikService {
         } else {
             smesharik.setEmail(request.getEmail());
         }
-        smesharik.setPassword(new BCryptPasswordEncoder().encode(request.getPassword()));
 
         if (!errors.isEmpty()) {
             throw new GeneralException(HttpStatus.BAD_REQUEST, errors);
@@ -82,19 +99,75 @@ public class SmesharikService {
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public SmesharikResponse get(String login) {
-        Smesharik smesharik = getByLoginPermissions(login);
+        Smesharik smesharik = getByLogin(login);
+        if (!Objects.equals(smesharik.getId(), commonService.getCurrentSmesharik().getId()) &&
+                friendService.areFriends(smesharik.getId(), commonService.getCurrentSmesharik().getId())) {
+            HashMap<String, String> errors = new HashMap<>();
+            errors.put("message", "Ошибка доступа.");
+            throw new GeneralException(HttpStatus.FORBIDDEN, errors);
+        }
         return buildResponse(smesharik);
     }
+
+    public @NotNull MessageResponse changePassword(SmesharikChangePasswordRequest request, String login) {
+        HashMap<String, String> errors = new HashMap<>();
+        Smesharik smesharik = getByLoginPermissions(login);
+
+        System.out.println(new BCryptPasswordEncoder().encode(request.getOldPassword()));
+        System.out.println(smesharik.getPassword());
+        if (!passwordEncoder.matches(request.getOldPassword(), smesharik.getPassword())) {
+            errors.put("oldPassword", "Старый пароль неверный.");
+            throw new GeneralException(HttpStatus.FORBIDDEN, errors);
+        }
+        if (request.getOldPassword().equals(request.getNewPassword())) {
+            errors.put("message", "Пароли не могут совпадать.");
+            throw new GeneralException(HttpStatus.FORBIDDEN, errors);
+        }
+
+        smesharik.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        repository.save(smesharik);
+
+        return new MessageResponse().setMessage("Пароль успешно именён!");
+    }
+
+    public @NotNull SmesharikResponse changeRole(SmesharikChangeRoleRequest request, String login) {
+        commonService.checkIfAdmin();
+        HashMap<String, String> errors = new HashMap<>();
+        Smesharik smesharik = getByLogin(login);
+        if (smesharik.getRole().equals(request.getRole())) {
+            errors.put("role", "Не должна совпадать с текущей.");
+            throw new GeneralException(HttpStatus.FORBIDDEN, errors);
+        }
+
+        smesharik.setRole(request.getRole());
+        return buildResponse(repository.save(smesharik));
+    }
+
+
 
     private SmesharikResponse buildResponse(Smesharik smesharik) {
         return new SmesharikResponse()
                 .setName(smesharik.getName())
                 .setLogin(smesharik.getLogin())
-                .setEmail(smesharik.getEmail());
+                .setEmail(smesharik.getEmail())
+                .setRole(smesharik.getRole())
+                .setIsOnline(smesharik.getIsOnline())
+                .setColor(smesharik.getColor());
     }
 
-
     private Smesharik getByLoginPermissions(String login) {
+        HashMap<String, String> errors = new HashMap<>();
+        Smesharik smesharik = getByLogin(login);
+
+        if (!Objects.equals(smesharik.getId(), commonService.getCurrentSmesharik().getId())) {
+            errors.put("message", "Ошибка доступа.");
+            throw new GeneralException(HttpStatus.FORBIDDEN, errors);
+        }
+
+        return smesharik;
+    }
+
+    private Smesharik getByLogin(String login) {
         HashMap<String, String> errors = new HashMap<>();
 
         Optional<Smesharik> smesharikOpt = repository.findByLogin(login);
@@ -102,31 +175,30 @@ public class SmesharikService {
             errors.put("message", "Данный smesharik не найден.");
             throw new GeneralException(HttpStatus.NOT_FOUND, errors);
         }
-        Smesharik smesharik = smesharikOpt.get();
-        if (!Objects.equals(smesharik.getId(), getCurrentSmesharik().getId())) {
-            errors.put("message", "Ошибка доступа.");
-            throw new GeneralException(HttpStatus.FORBIDDEN, errors);
-        }
-        return smesharik;
+
+        return smesharikOpt.get();
     }
 
-    public Smesharik getSmesharik(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> {
-                    HashMap<String, String> errors = new HashMap<>();
-                    errors.put("message", "Смешарик не был найден.");
-                    return new GeneralException(HttpStatus.BAD_REQUEST, errors);
-                });
-    }
 
-    public Smesharik getByLogin(String login) {
-        return repository.findByLogin(login)
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+    public @NotNull PaginatedResponse<SmesharikResponse> getAll(String nameOrLogin, List<String> roles, @Min(value = 0) Integer page, @Min(value = 1) @Max(value = 50) Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
 
-    }
+        Specification<Smesharik> specification = Specification.where(SmesharikSpecification.hasNameOrLogin(nameOrLogin))
+                .and(SmesharikSpecification.hasRoles(roles));
 
-    public Smesharik getCurrentSmesharik() {
-        var login = SecurityContextHolder.getContext().getAuthentication().getName();
-        return getByLogin(login);
+        Page<Smesharik> smesharikPage = repository.findAll(specification, pageable);
+
+        List<SmesharikResponse> responses = smesharikPage.getContent().stream()
+                .map(this::buildResponse)
+                .toList();
+
+        return new PaginatedResponse<>(
+                responses,
+                smesharikPage.getTotalPages(),
+                smesharikPage.getTotalElements(),
+                smesharikPage.getNumber(),
+                smesharikPage.getSize()
+        );
+
     }
 }

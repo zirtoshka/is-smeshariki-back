@@ -41,7 +41,9 @@ CREATE table if not exists smesharik
     role        smesharik_role NOT null default 'USER',
     is_online   BOOLEAN        NOT null default false,
     last_active TIMESTAMP      NOT null default CURRENT_TIMESTAMP,
+    color       VARCHAR(16)    NOT null default '#91b3f2',
     CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
+    CHECK (color ~* '\#[A-Fa-f0-9]{6}'),
     CHECK (name <> ''),
     CHECK (login <> '')
 

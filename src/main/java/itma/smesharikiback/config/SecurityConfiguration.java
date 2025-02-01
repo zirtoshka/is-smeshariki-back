@@ -3,7 +3,6 @@ package itma.smesharikiback.config;
 
 import itma.smesharikiback.auth.JwtAuthenticationFilter;
 import itma.smesharikiback.services.CommonService;
-import itma.smesharikiback.services.SmesharikService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

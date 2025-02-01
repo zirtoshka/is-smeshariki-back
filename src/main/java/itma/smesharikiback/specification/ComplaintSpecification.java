@@ -3,7 +3,6 @@ package itma.smesharikiback.specification;
 import itma.smesharikiback.models.Complaint;
 import itma.smesharikiback.models.GeneralStatus;
 import itma.smesharikiback.models.Smesharik;
-import itma.smesharikiback.services.CommonService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import jakarta.persistence.criteria.Predicate;

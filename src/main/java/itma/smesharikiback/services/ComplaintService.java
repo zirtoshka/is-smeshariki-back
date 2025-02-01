@@ -1,7 +1,6 @@
 package itma.smesharikiback.services;
 
 import itma.smesharikiback.specification.ComplaintSpecification;
-import itma.smesharikiback.specification.PaginationSpecification;
 import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.*;
 import itma.smesharikiback.models.reposirories.CommentRepository;
@@ -11,9 +10,6 @@ import itma.smesharikiback.models.reposirories.SmesharikRepository;
 import itma.smesharikiback.requests.ComplaintRequest;
 import itma.smesharikiback.response.ComplaintResponse;
 import itma.smesharikiback.response.PaginatedResponse;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,5 +1,6 @@
 package itma.smesharikiback.controllers;
 
+import itma.smesharikiback.models.GeneralStatus;
 import itma.smesharikiback.requests.ComplaintRequest;
 import itma.smesharikiback.response.ComplaintResponse;
 import itma.smesharikiback.response.PaginatedResponse;
@@ -10,6 +11,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/complaint")
@@ -41,12 +45,23 @@ public class ComplaintController {
 
     @GetMapping
     public PaginatedResponse<ComplaintResponse> getAll(
-            @RequestParam(required = false, defaultValue = "") String filter,
+            @RequestParam(required = false, defaultValue = "") String description,
+            @RequestParam(required = false) List<GeneralStatus> statuses,
+            @RequestParam(required = false) Boolean isMine,
             @RequestParam(required = false, defaultValue = "creationDate") String sortField,
             @RequestParam(required = false, defaultValue = "true") @NotNull Boolean ascending,
             @RequestParam(required = false, defaultValue = "0") @Min(value = 0) Integer page,
             @RequestParam(required = false, defaultValue = "10") @Min(value = 1) @Max(value = 50) Integer size
     ) {
-        return complaintService.getAllComplaints(filter, sortField, ascending, page, size);
+        if (statuses == null || statuses.isEmpty()) {
+            statuses = Arrays.asList(
+                    GeneralStatus.NEW,
+                    GeneralStatus.DONE,
+                    GeneralStatus.IN_PROGRESS,
+                    GeneralStatus.CANCELED
+            );
+        }
+
+        return complaintService.getAllComplaints(description, statuses, isMine, sortField, ascending, page, size);
     }
 }

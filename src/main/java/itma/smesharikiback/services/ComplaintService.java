@@ -1,5 +1,6 @@
 package itma.smesharikiback.services;
 
+import itma.smesharikiback.specification.ComplaintSpecification;
 import itma.smesharikiback.specification.PaginationSpecification;
 import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.*;
@@ -10,6 +11,9 @@ import itma.smesharikiback.models.reposirories.SmesharikRepository;
 import itma.smesharikiback.requests.ComplaintRequest;
 import itma.smesharikiback.response.ComplaintResponse;
 import itma.smesharikiback.response.PaginatedResponse;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +53,7 @@ public class ComplaintService {
         HashMap<String, String> errors = new HashMap<>();
 
         if (complaintRequest.getAdmin() != null) {
-            Optional<Smesharik> admin = smesharikRepository.findById(complaintRequest.getAdmin());
+            Optional<Smesharik> admin = smesharikRepository.findByLogin(complaintRequest.getAdmin());
             if (admin.isEmpty()) {
                 errors.put("admin", "Admin не найден.");
                 throw new GeneralException(HttpStatus.BAD_REQUEST, errors);
@@ -112,7 +117,9 @@ public class ComplaintService {
     }
 
     public PaginatedResponse<ComplaintResponse> getAllComplaints(
-            String filter,
+            String description,
+            List<GeneralStatus> statuses,
+            Boolean isMine,
             String sortField,
             Boolean ascending,
             Integer page,
@@ -125,8 +132,8 @@ public class ComplaintService {
         );
 
         Page<Complaint> resultPage = complaintRepository.findAll(
-                PaginationSpecification.filterByMultipleFields(filter), pageRequest);
-
+                ComplaintSpecification.getComplaints(description, statuses, isMine, commonService.getCurrentSmesharik()),
+                pageRequest);
 
         List<ComplaintResponse> content = resultPage.getContent().stream()
                 .map(this::buildResponse)
@@ -143,7 +150,7 @@ public class ComplaintService {
 
     private ComplaintResponse buildResponse(Complaint complaint) {
         ComplaintResponse complaintResponse = new ComplaintResponse();
-        if (complaint.getAdmin() != null) complaintResponse.setAdmin(complaint.getAdmin().getId());
+        if (complaint.getAdmin() != null) complaintResponse.setAdmin(complaint.getAdmin().getLogin());
         if (complaint.getComment() != null) complaintResponse.setComment(complaint.getComment().getId());
         if (complaint.getPost() != null) complaintResponse.setPost(complaint.getPost().getId());
 

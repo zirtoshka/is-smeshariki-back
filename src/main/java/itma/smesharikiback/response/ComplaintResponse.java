@@ -12,7 +12,7 @@ public class ComplaintResponse {
     private Long id;
     private ViolationType violationType;
     private String description;
-    private Long admin;
+    private String admin;
     private Long post;
     private Long comment;
     private GeneralStatus status;

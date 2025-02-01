@@ -15,8 +15,7 @@ public class ComplaintRequest {
     private ViolationType violationType = ViolationType.SPAM;
     private String description;
 
-    @Min(value = 0, message = "Значение поля admin должно быть больше 0")
-    private Long admin;
+    private String admin;
     @Min(value = 0, message = "Значение поля post должно быть больше 0")
     private Long post;
     @Min(value = 0, message = "Значение поля comment должно быть больше 0")

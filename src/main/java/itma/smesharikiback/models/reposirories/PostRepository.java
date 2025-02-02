@@ -21,35 +21,39 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
 
     List<Post> findByIsPrivateFalseAndIsDraftFalseOrderByPublicationDateDesc();
 
-    @Query("SELECT new itma.smesharikiback.models.dto.PostWithCarrotsDto(p.id, p.author.id, p.isDraft, " +
+    @Query("SELECT new itma.smesharikiback.models.dto.PostWithCarrotsDto(p.id, p.author, p.isDraft, " +
             "p.text, p.isPrivate, p.publicationDate, p.pathToImage, p.creationDate, " +
             "COUNT(cl)) " +
             "FROM Post p " +
+            "LEFT JOIN p.author " +
             "LEFT JOIN Carrot cl ON cl.post = p " +
             "WHERE p.id = :id " +
-            "GROUP BY p.id")
+            "GROUP BY p.id, p.author")
     Optional<PostWithCarrotsDto> findByIdWithCarrots(Long id);
 
-    @Query("SELECT new itma.smesharikiback.models.dto.PostWithCarrotsDto(p.id, p.author.id, p.isDraft, " +
+    @Query("SELECT new itma.smesharikiback.models.dto.PostWithCarrotsDto(p.id, p.author, p.isDraft, " +
             "p.text, p.isPrivate, p.publicationDate, p.pathToImage, p.creationDate, " +
             "COUNT(cl)) " +
             "FROM Post p " +
+            "LEFT JOIN p.author " +
             "LEFT JOIN Carrot cl ON cl.post = p " +
-            "GROUP BY p.id")
+            "GROUP BY p.id, p.author")
     Page<PostWithCarrotsDto> findPosts(Specification<Post> specification, Pageable pageable);
 
-    @Query("SELECT new itma.smesharikiback.models.dto.PostWithCarrotsDto(p.id, p.author.id, p.isDraft, " +
+    @Query("SELECT new itma.smesharikiback.models.dto.PostWithCarrotsDto(p.id, p.author, p.isDraft, " +
             "p.text, p.isPrivate, p.publicationDate, p.pathToImage, p.creationDate, " +
             "COUNT(cl)) " +
             "FROM Post p " +
+            "LEFT JOIN p.author " +
             "LEFT JOIN Carrot cl ON cl.post = p " +
             "WHERE p.author = :author " +
-            "GROUP BY p.id")
+            "GROUP BY p.id, p.author")
     Page<PostWithCarrotsDto> findPostsByAuthorWithCarrots(Smesharik author, Specification<Post> specification, Pageable pageable);
 
-    @Query("SELECT new itma.smesharikiback.models.dto.PostWithCarrotsDto(p.id, p.author.id, p.isDraft, " +
+    @Query("SELECT new itma.smesharikiback.models.dto.PostWithCarrotsDto(p.id, p.author, p.isDraft, " +
             "p.text, p.isPrivate, p.publicationDate, p.pathToImage, p.creationDate, COUNT(cl)) " +
             "FROM Post p " +
+            "LEFT JOIN p.author " +
             "LEFT JOIN Carrot cl ON cl.post = p " +
             "LEFT JOIN PostBan b ON p.id = b.id " +
             "WHERE p.isPrivate = false " +
@@ -58,7 +62,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
             "AND (b.endDate <= current_timestamp OR b.id IS NULL) " +
             "AND EXISTS (SELECT 1 FROM Friend f WHERE (f.follower = :currentSmesharik OR f.followee = :currentSmesharik) " +
             "AND f.status = 'FRIENDS' AND (f.follower = p.author OR f.followee = p.author)) " +
-            "GROUP BY p.id")
+            "GROUP BY p.id, p.author")
     Page<PostWithCarrotsDto> findPublicPostsForSmesharik(@Param("currentSmesharik") Smesharik currentSmesharik, Specification<Post> specification, Pageable pageable);
 
 }

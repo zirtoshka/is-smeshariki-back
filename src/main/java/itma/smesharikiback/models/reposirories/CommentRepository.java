@@ -22,10 +22,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpec
             "CASE WHEN EXISTS (SELECT 1 FROM Comment c2 WHERE c2.parentComment = c) THEN true ELSE false END, " +
             "COUNT(cl.id)) " +
             "FROM Comment c " +
-            "LEFT JOIN c.smesharik s " + // LEFT JOIN для smesharik
-            "LEFT JOIN c.post p " +      // LEFT JOIN для post
-            "LEFT JOIN c.parentComment pc " + // LEFT JOIN для parentComment
-            "LEFT JOIN Carrot cl ON cl.comment = c " + // Существующий LEFT JOIN для Carrot
+            "LEFT JOIN c.smesharik s " +
+            "LEFT JOIN c.post p " +
+            "LEFT JOIN c.parentComment pc " +
+            "LEFT JOIN Carrot cl ON cl.comment = c " +
             "WHERE c.id = :id " +
             "GROUP BY c.id, s, p, pc, c.creationDate, c.text")
     Optional<CommentWithChildrenDto> findByIdWithChildren(Long id);
@@ -35,9 +35,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpec
             "CASE WHEN EXISTS (SELECT 1 FROM Comment c2 WHERE c2.parentComment = c) THEN true ELSE false END, " +
             "COUNT(cl) ) " +
             "FROM Comment c " +
-            "LEFT JOIN c.smesharik s " + // LEFT JOIN для smesharik
-            "LEFT JOIN c.post p " +      // LEFT JOIN для post
-            "LEFT JOIN c.parentComment pc " + // LEFT JOIN для parentComment
+            "LEFT JOIN c.smesharik s " +
+            "LEFT JOIN c.post p " +
+            "LEFT JOIN c.parentComment pc " +
             "LEFT JOIN Carrot cl ON cl.comment = c " +
             "LEFT JOIN CommentBan b ON c.id = b.id " +
             "WHERE (b.endDate <= current_timestamp OR b.id IS NULL) " +

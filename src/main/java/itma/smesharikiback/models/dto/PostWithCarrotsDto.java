@@ -1,5 +1,6 @@
 package itma.smesharikiback.models.dto;
 
+import itma.smesharikiback.models.Smesharik;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PostWithCarrotsDto {
     private Long id;
-    private Long author;
+    private Smesharik author;
     private Boolean isDraft;
     private String text;
     private Boolean isPrivate ;

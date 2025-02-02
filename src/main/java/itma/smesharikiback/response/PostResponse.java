@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 public class PostResponse {
     protected Long id;
-    protected Long author;
+    protected String author;
     protected Boolean isDraft;
     protected String text;
     protected Boolean isPrivate = true;

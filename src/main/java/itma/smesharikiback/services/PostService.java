@@ -67,7 +67,7 @@ public class PostService {
         PostWithCarrotsDto post = postRepository.findByIdWithCarrots(id).orElse(null);
 
         try {
-            if (post == null || !friendService.isFriendsOrAdminId(post.getAuthor(), commonService.getCurrentSmesharik().getId()))
+            if (post == null || !friendService.isFriendsOrAdminId(post.getAuthor().getId(), commonService.getCurrentSmesharik().getId()))
             {
                 map.put("message", "Post не доступен.");
                 throw new GeneralException(HttpStatus.NOT_FOUND, map);
@@ -147,7 +147,7 @@ public class PostService {
     public PostResponse buildResponse(Post post) {
         return new PostResponse()
                 .setId(post.getId())
-                .setAuthor(post.getAuthor().getId())
+                .setAuthor(post.getAuthor().getLogin())
                 .setCreationDate(post.getCreationDate())
                 .setText(post.getText())
                 .setIsDraft(post.getIsDraft())
@@ -161,7 +161,7 @@ public class PostService {
         response.setCountCarrots(post.getCountCarrots());
         return (PostWithCarrotsResponse) response
                 .setId(post.getId())
-                .setAuthor(post.getAuthor())
+                .setAuthor(post.getAuthor().getLogin())
                 .setCreationDate(post.getCreationDate())
                 .setText(post.getText())
                 .setIsDraft(post.getIsDraft())

@@ -216,7 +216,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8081/api/smesharik/sovunya/changeRole",
+							"raw": "http://localhost:8081/api/smesharik/krosh/changeRole",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -225,7 +225,7 @@
 							"path": [
 								"api",
 								"smesharik",
-								"sovunya",
+								"krosh",
 								"changeRole"
 							]
 						}
@@ -571,7 +571,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"text\": \"comment полюбить\",\r\n    \"post\": 1\r\n}",
+							"raw": "{\r\n    \"text\": \"comment полюбить убью\",\r\n    \"post\": null,\r\n    \"parentComment\": 7\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -609,7 +609,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8081/api/comment/1",
+							"raw": "http://localhost:8081/api/comment/6",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -618,7 +618,7 @@
 							"path": [
 								"api",
 								"comment",
-								"1"
+								"6"
 							]
 						}
 					},
@@ -640,7 +640,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8081/api/comment?size=2&page=0&post=4",
+							"raw": "http://localhost:8081/api/comment?comment=7&size=2&page=0",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -653,8 +653,7 @@
 							"query": [
 								{
 									"key": "comment",
-									"value": "1",
-									"disabled": true
+									"value": "7"
 								},
 								{
 									"key": "size",
@@ -666,7 +665,8 @@
 								},
 								{
 									"key": "post",
-									"value": "4"
+									"value": "9",
+									"disabled": true
 								}
 							]
 						}
@@ -782,7 +782,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"followee\": 2,\r\n    \"follower\": 3\r\n}",
+							"raw": "{\r\n    \"followee\": \"barash\",\r\n    \"follower\": \"sovunya\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -820,7 +820,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8081/api/friend/acceptFriend?follower=3&followee=2",
+							"raw": "http://localhost:8081/api/friend/acceptFriend?follower=sovunya&followee=barash",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -834,11 +834,11 @@
 							"query": [
 								{
 									"key": "follower",
-									"value": "3"
+									"value": "sovunya"
 								},
 								{
 									"key": "followee",
-									"value": "2"
+									"value": "barash"
 								}
 							]
 						}
@@ -861,7 +861,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8081/api/friend?follower=2&followee=1",
+							"raw": "http://localhost:8081/api/friend?follower=sovunya&followee=barash",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -874,11 +874,11 @@
 							"query": [
 								{
 									"key": "follower",
-									"value": "2"
+									"value": "sovunya"
 								},
 								{
 									"key": "followee",
-									"value": "1"
+									"value": "barash"
 								}
 							]
 						}
@@ -919,6 +919,11 @@
 								{
 									"key": "size",
 									"value": "3"
+								},
+								{
+									"key": "nameOrLogin",
+									"value": "kopatych",
+									"disabled": true
 								}
 							]
 						}
@@ -941,7 +946,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8081/api/friend/followers?page=0&size=5",
+							"raw": "http://localhost:8081/api/friend/followers?page=0&size=5&nameOrLogin",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -960,6 +965,10 @@
 								{
 									"key": "size",
 									"value": "5"
+								},
+								{
+									"key": "nameOrLogin",
+									"value": null
 								}
 							]
 						}
@@ -982,7 +991,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8081/api/friend/follows?page=0&size=5",
+							"raw": "http://localhost:8081/api/friend/follows?page=0&size=5&nameOrLogin",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1001,6 +1010,10 @@
 								{
 									"key": "size",
 									"value": "5"
+								},
+								{
+									"key": "nameOrLogin",
+									"value": null
 								}
 							]
 						}
@@ -1029,7 +1042,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"reason\": \"Мне не нравится!\",\r\n    \"post\": 5\r\n}",
+							"raw": "{\r\n    \"reason\": \"Мне не нравится!\",\r\n    \"smesharik\": \"krosh\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1076,7 +1089,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8081/api/ban/3",
+							"raw": "http://localhost:8081/api/ban/6",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1085,7 +1098,7 @@
 							"path": [
 								"api",
 								"ban",
-								"3"
+								"6"
 							]
 						}
 					},
@@ -1108,7 +1121,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"reason\": \"Нет!\",\r\n    \"smesharik\": 1\r\n}",
+							"raw": "{\r\n    \"reason\": \"Нет!\",\r\n    \"smesharik\": \"krosh\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1116,7 +1129,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8081/api/ban/1",
+							"raw": "http://localhost:8081/api/ban/6",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1125,7 +1138,7 @@
 							"path": [
 								"api",
 								"ban",
-								"1"
+								"6"
 							]
 						}
 					},
@@ -1369,7 +1382,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"violationType\": \"SPAM\",\r\n    \"description\": \"НУ ЭТО СПАМ!!!\",\r\n    \"post\": 2,\r\n    \"comment\": null,\r\n    \"admin\": 1,\r\n    \"creationDate\": \"2025-01-31T00:26:40.9234618\",\r\n    \"status\": \"NEW\"\r\n}",
+							"raw": "{\r\n    \"violationType\": \"SPAM\",\r\n    \"description\": \"НУ ЭТО СПАМ!!!\",\r\n    \"post\": 2,\r\n    \"comment\": null,\r\n    \"admin\": \"kopatych\",\r\n    \"creationDate\": \"2025-01-31T00:26:40.9234618\",\r\n    \"status\": \"NEW\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1840,7 +1853,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8081/api/application?filter&sortField=id&ascending=false&page=0&size=2",
+							"raw": "http://localhost:8081/api/application?isMine=true&sortField=id&ascending=false&page=0&size=2",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1852,8 +1865,8 @@
 							],
 							"query": [
 								{
-									"key": "filter",
-									"value": null
+									"key": "isMine",
+									"value": "true"
 								},
 								{
 									"key": "sortField",
@@ -1870,6 +1883,11 @@
 								{
 									"key": "size",
 									"value": "2"
+								},
+								{
+									"key": "statuses",
+									"value": "IN_PROGRESS",
+									"disabled": true
 								}
 							]
 						}
@@ -1893,7 +1911,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"post\": 1,\r\n    \"comment\": null\r\n}",
+							"raw": "{\r\n    \"post\": 1,\r\n    \"comment\": null,\r\n    \"doctor\": \"sovunya\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

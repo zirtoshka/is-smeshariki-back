@@ -1,8 +1,6 @@
 package itma.smesharikiback.requests;
 
 import itma.smesharikiback.models.FriendStatus;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

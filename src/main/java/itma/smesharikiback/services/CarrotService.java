@@ -74,7 +74,7 @@ public class CarrotService {
     }
 
     private Carrot getCarrot(Long comment, Long post) {
-        Pair<Comment, Post> pair = commonService.getParentCommentOrPost(comment, post);в
+        Pair<Comment, Post> pair = commonService.getParentCommentOrPost(comment, post);
         Post parentPost = pair.getRight();
         Comment parentComment = pair.getLeft();
 

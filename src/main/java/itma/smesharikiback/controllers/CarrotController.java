@@ -1,6 +1,7 @@
 package itma.smesharikiback.controllers;
 
 import itma.smesharikiback.response.CarrotResponse;
+import itma.smesharikiback.response.MessageResponse;
 import itma.smesharikiback.services.CarrotService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,5 +27,13 @@ public class CarrotController {
             @RequestParam(required = false) Long post
     ) {
         return carrotService.delete(post, comment);
+    }
+
+    @GetMapping("/check")
+    public MessageResponse checkLike(
+            @RequestParam(required = false) Long comment,
+            @RequestParam(required = false) Long post
+    ) {
+        return carrotService.check(post, comment);
     }
 }

@@ -7,6 +7,7 @@ import itma.smesharikiback.models.Post;
 import itma.smesharikiback.models.Smesharik;
 import itma.smesharikiback.models.reposirories.CarrotRepository;
 import itma.smesharikiback.response.CarrotResponse;
+import itma.smesharikiback.response.MessageResponse;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpStatus;
@@ -58,7 +59,22 @@ public class CarrotService {
     }
 
     public ResponseEntity<?> delete(Long post, Long comment) {
-        Pair<Comment, Post> pair = commonService.getParentCommentOrPost(comment, post);
+        Carrot carrot = getCarrot(post, comment);
+
+        carrotRepository.delete(carrot);
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put("message", "Carrot удалён.");
+        return ResponseEntity.ok().body(map);
+    }
+
+    public MessageResponse check(Long post, Long comment) {
+        getCarrot(comment, post);
+        return new MessageResponse().setMessage("Carrot выставлен.");
+    }
+
+    private Carrot getCarrot(Long comment, Long post) {
+        Pair<Comment, Post> pair = commonService.getParentCommentOrPost(comment, post);в
         Post parentPost = pair.getRight();
         Comment parentComment = pair.getLeft();
 
@@ -78,10 +94,6 @@ public class CarrotService {
             throw new GeneralException(HttpStatus.NOT_FOUND, map);
         }
 
-        carrotRepository.delete(carrot.get());
-
-        HashMap<String, String> map = new HashMap<>();
-        map.put("message", "Carrot удалён.");
-        return ResponseEntity.ok().body(map);
+        return carrot.get();
     }
 }

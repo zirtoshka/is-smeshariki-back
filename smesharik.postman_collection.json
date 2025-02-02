@@ -720,6 +720,48 @@
 					"response": []
 				},
 				{
+					"name": "check carrot",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/carrot/check?comment=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"carrot",
+								"check"
+							],
+							"query": [
+								{
+									"key": "comment",
+									"value": "1"
+								},
+								{
+									"key": "post",
+									"value": "4",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "delete",
 					"request": {
 						"auth": {

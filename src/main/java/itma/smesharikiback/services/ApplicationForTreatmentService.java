@@ -3,7 +3,6 @@ package itma.smesharikiback.services;
 import itma.smesharikiback.models.*;
 import itma.smesharikiback.models.reposirories.SmesharikRepository;
 import itma.smesharikiback.specification.ApplicationSpecification;
-import itma.smesharikiback.specification.PaginationSpecification;
 import itma.smesharikiback.exceptions.GeneralException;
 import itma.smesharikiback.models.reposirories.ApplicationForTreatmentRepository;
 import itma.smesharikiback.models.reposirories.CommentRepository;
@@ -20,7 +19,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
 import java.util.List;

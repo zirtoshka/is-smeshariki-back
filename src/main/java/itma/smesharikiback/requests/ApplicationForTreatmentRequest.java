@@ -1,7 +1,6 @@
 package itma.smesharikiback.requests;
 
 import itma.smesharikiback.models.GeneralStatus;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

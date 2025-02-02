@@ -100,7 +100,7 @@ public class SmesharikService {
     public SmesharikResponse get(String login) {
         Smesharik smesharik = getByLogin(login);
         if (!Objects.equals(smesharik.getId(), commonService.getCurrentSmesharik().getId()) &&
-                friendService.areFriends(smesharik.getId(), commonService.getCurrentSmesharik().getId())) {
+                friendService.areFriends(smesharik.getLogin(), commonService.getCurrentSmesharik().getLogin())) {
             HashMap<String, String> errors = new HashMap<>();
             errors.put("message", "Ошибка доступа.");
             throw new GeneralException(HttpStatus.FORBIDDEN, errors);

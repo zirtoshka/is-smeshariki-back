@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class FriendResponse {
     private Long id;
-    private Long followee;
-    private Long follower;
+    private String followee;
+    private String follower;
     private FriendStatus status;
 }

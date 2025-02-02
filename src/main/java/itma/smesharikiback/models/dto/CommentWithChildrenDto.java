@@ -1,5 +1,8 @@
 package itma.smesharikiback.models.dto;
 
+import itma.smesharikiback.models.Comment;
+import itma.smesharikiback.models.Post;
+import itma.smesharikiback.models.Smesharik;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -9,10 +12,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CommentWithChildrenDto {
     private Long id;
-    private Long smesharik;
-    private Long post;
+    private Smesharik smesharik;
+    private Post post;
     private LocalDateTime creationDate;
-    private Long parentComment;
+    private Comment parentComment;
     private String text;
     private boolean hasChildren;
     private Long countCarrots;

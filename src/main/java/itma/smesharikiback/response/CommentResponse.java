@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 public class CommentResponse {
     protected Long id;
-    protected Long smesharik;
+    protected String smesharik;
     protected Long post;
     protected LocalDateTime creationDate;
     protected Long parentComment;

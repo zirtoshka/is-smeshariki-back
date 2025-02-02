@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class BanResponse {
     private Long id;
     private String reason;
-    private Long smesharik;
+    private String smesharik;
     private Long post;
     private LocalDateTime endDate;
     private Long comment;

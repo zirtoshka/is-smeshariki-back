@@ -34,7 +34,7 @@ public class CarrotService {
         if (post == null) smesharik = commentService.findPostAuthorByComment(parentComment);
         else smesharik = parentPost.getAuthor();
 
-        if (!friendService.isFriendsOrAdmin(smesharik.getId(), commonService.getCurrentSmesharik().getId())) {
+        if (!friendService.isFriendsOrAdmin(smesharik.getLogin(), commonService.getCurrentSmesharik().getLogin())) {
             HashMap<String, String> map = new HashMap<>();
             map.put("message", "Нельзя ставить лайки под постами не друзей.");
             throw new GeneralException(HttpStatus.BAD_REQUEST, map);
@@ -54,7 +54,7 @@ public class CarrotService {
 
         return carrotResponse
                 .setId(carrot.getId())
-                .setSmesharik(carrot.getSmesharik().getId());
+                .setSmesharik(carrot.getSmesharik().getLogin());
     }
 
     public ResponseEntity<?> delete(Long post, Long comment) {

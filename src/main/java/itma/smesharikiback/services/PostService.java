@@ -67,7 +67,7 @@ public class PostService {
         PostWithCarrotsDto post = postRepository.findByIdWithCarrots(id).orElse(null);
 
         try {
-            if (post == null || !friendService.isFriendsOrAdmin(post.getAuthor(), commonService.getCurrentSmesharik().getId()))
+            if (post == null || !friendService.isFriendsOrAdminId(post.getAuthor(), commonService.getCurrentSmesharik().getId()))
             {
                 map.put("message", "Post не доступен.");
                 throw new GeneralException(HttpStatus.NOT_FOUND, map);

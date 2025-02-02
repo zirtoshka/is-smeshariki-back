@@ -68,7 +68,7 @@ public class BanService {
 
     private BanResponse buildResponse(Ban ban) {
         BanResponse response = new BanResponse();
-        if (ban.getSmesharik() != null) response.setSmesharik(ban.getSmesharik().getId());
+        if (ban.getSmesharik() != null) response.setSmesharik(ban.getSmesharik().getLogin());
         if (ban.getPost() != null) response.setPost(ban.getPost().getId());
         if (ban.getComment() != null) response.setComment(ban.getComment().getId());
 
@@ -119,7 +119,7 @@ public class BanService {
         Post post = null;
         Comment comment = null;
         if (request.getSmesharik() != null) {
-            smesharik = smesharikRepository.findById(request.getSmesharik()).orElse(null);
+            smesharik = smesharikRepository.findByLogin(request.getSmesharik()).orElse(null);
         } else if (request.getPost() != null) {
             post = postRepository.findById(request.getPost()).orElse(null);
         } else {

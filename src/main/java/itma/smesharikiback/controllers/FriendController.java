@@ -26,41 +26,44 @@ public class FriendController {
 
     @PostMapping("/acceptFriend")
     public FriendResponse acceptFriend(
-            @RequestParam @Min(value = 0, message = "follower не может быть отрицательным") @Validated Long follower,
-            @RequestParam @Min(value = 0, message = "followee не может быть отрицательным") @Validated Long followee
+            @RequestParam @Validated String follower,
+            @RequestParam @Validated String followee
             ) {
         return friendService.acceptFriendRequest(follower, followee);
     }
 
     @DeleteMapping
     public MessageResponse deleteFriendship(
-            @RequestParam @Min(value = 0, message = "follower не может быть отрицательным") @Validated Long follower,
-            @RequestParam @Min(value = 0, message = "followee не может быть отрицательным") @Validated Long followee
+            @RequestParam @Validated String follower,
+            @RequestParam @Validated String followee
     ) {
         return friendService.removeFriend(follower, followee);
     }
 
     @GetMapping
     public PaginatedResponse<FriendResponse> getFriends(
+            @RequestParam(required = false, defaultValue = "") String nameOrLogin,
             @RequestParam(required = false, defaultValue = "0") @Min(value = 0) Integer page,
             @RequestParam(required = false, defaultValue = "10") @Min(value = 1) @Max(value = 50) Integer size
     ) {
-        return friendService.getFriends(page, size);
+        return friendService.getFriends(nameOrLogin, page, size);
     }
 
     @GetMapping("/followers")
     public PaginatedResponse<FriendResponse> getFollowers(
+            @RequestParam(required = false, defaultValue = "") String nameOrLogin,
             @RequestParam(required = false, defaultValue = "0") @Min(value = 0) Integer page,
             @RequestParam(required = false, defaultValue = "10") @Min(value = 1) @Max(value = 50) Integer size
     ) {
-        return friendService.getFollowers(page, size);
+        return friendService.getFollowers(nameOrLogin, page, size);
     }
 
     @GetMapping("/follows")
     public PaginatedResponse<FriendResponse> getFollows(
+            @RequestParam(required = false, defaultValue = "") String nameOrLogin,
             @RequestParam(required = false, defaultValue = "0") @Min(value = 0) Integer page,
             @RequestParam(required = false, defaultValue = "10") @Min(value = 1) @Max(value = 50) Integer size
     ) {
-        return friendService.getFollows(page, size);
+        return friendService.getFollows(nameOrLogin, page, size);
     }
 }

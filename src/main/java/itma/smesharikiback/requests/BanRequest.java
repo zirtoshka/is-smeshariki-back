@@ -15,7 +15,7 @@ public class BanRequest {
     @NotBlank(message = "reason не может быть пустой")
     private String reason;
 
-    private Long smesharik;
+    private String smesharik;
     private Long post;
     private Long comment;
 

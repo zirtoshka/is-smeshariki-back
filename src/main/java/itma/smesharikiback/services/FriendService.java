@@ -11,10 +11,12 @@ import itma.smesharikiback.requests.FriendRequest;
 import itma.smesharikiback.response.FriendResponse;
 import itma.smesharikiback.response.MessageResponse;
 import itma.smesharikiback.response.PaginatedResponse;
+import itma.smesharikiback.specification.FriendSpecification;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -59,7 +61,7 @@ public class FriendService {
     }
 
     @Transactional
-    public FriendResponse acceptFriendRequest(Long followerId, Long followeeId) {
+    public FriendResponse acceptFriendRequest(String followerId, String followeeId) {
         Friend friendRequest = getFriendship(followeeId, followerId);
 
         HashMap<String, String> errors = new HashMap<>();
@@ -77,17 +79,30 @@ public class FriendService {
     }
 
     @Transactional
-    public MessageResponse removeFriend(Long followerId, Long followeeId) {
+    public MessageResponse removeFriend(String followerId, String followeeId) {
         Friend friend = getFriendship(followeeId, followerId);
         friendRepository.delete(friend);
         return new MessageResponse().setMessage("Друг удален.");
     }
 
 
-    public Pair<Smesharik, Smesharik> getSmeshariks(Long followeeId, Long followerId) {
+    public Pair<Smesharik, Smesharik> getSmeshariks(String followeeLogin, String followerLogin) {
+        Smesharik followee = smesharikRepository.findByLogin(followeeLogin).orElse(null);
+        Smesharik follower = smesharikRepository.findByLogin(followerLogin).orElse(null);
+
+        return getSmesharikPair(followee, follower);
+
+    }
+
+    public Pair<Smesharik, Smesharik> getSmeshariksById(Long followeeId, Long followerId) {
         Smesharik followee = smesharikRepository.findById(followeeId).orElse(null);
         Smesharik follower = smesharikRepository.findById(followerId).orElse(null);
 
+        return getSmesharikPair(followee, follower);
+    }
+
+    @NotNull
+    private Pair<Smesharik, Smesharik> getSmesharikPair(Smesharik followee, Smesharik follower) {
         HashMap<String, String> errors = new HashMap<>();
         if (followee == null) {
             errors.put("followee", "Followee не был найден.");
@@ -103,10 +118,10 @@ public class FriendService {
         return Pair.of(followee, follower);
     }
 
-    public Friend getFriendship(Long followeeId, Long followerId) {
+    public Friend getFriendship(String followeeLogin, String followerLogin) {
         Pair<Smesharik, Smesharik> pair = getSmeshariks(
-                followeeId,
-                followerId
+                followeeLogin,
+                followerLogin
         );
         Smesharik followee = pair.getLeft();
         Smesharik follower = pair.getRight();
@@ -128,16 +143,16 @@ public class FriendService {
         return isExist1 || isExist2;
     }
 
-    public Boolean isFriendsOrAdmin(Long authorId, Long userId) {
-        return (authorId.equals(userId) ||
+    public Boolean isFriendsOrAdmin(String authorLogin, String userLogin) {
+        return (authorLogin.equals(userLogin) ||
                 commonService.getCurrentSmesharik().getRole().equals(SmesharikRole.ADMIN) ||
-                areFriends(authorId, userId));
+                areFriends(authorLogin, userLogin));
     }
 
-    public boolean areFriends(Long followeeId, Long followerId) {
+    public boolean areFriends(String followeeLogin, String followerLogin) {
         Pair<Smesharik, Smesharik> pair = getSmeshariks(
-                followeeId,
-                followerId
+                followeeLogin,
+                followerLogin
         );
         Smesharik followee = pair.getLeft();
         Smesharik follower = pair.getRight();
@@ -156,18 +171,20 @@ public class FriendService {
     public FriendResponse buildResponse(Friend friend) {
         return new FriendResponse()
                 .setId(friend.getId())
-                .setFollowee(friend.getFollowee().getId())
-                .setFollower(friend.getFollower().getId())
+                .setFollowee(friend.getFollowee().getLogin())
+                .setFollower(friend.getFollower().getLogin())
                 .setStatus(friend.getStatus());
     }
 
 
     @Transactional
     public PaginatedResponse<FriendResponse> getFriends(
+            String nameOrLogin,
             @Min(value = 0) Integer page, @Min(value = 1) @Max(value = 50) Integer size
     ) {
         Smesharik followee = commonService.getCurrentSmesharik();
         return getPaginatedFriends(
+                nameOrLogin,
                 page,
                 size,
                 FriendStatus.FRIENDS,
@@ -177,11 +194,13 @@ public class FriendService {
     }
 
     public PaginatedResponse<FriendResponse> getFollowers(
+            String nameOrLogin,
             @Min(value = 0) Integer page, @Min(value = 1) @Max(value = 50) Integer size
     ) {
         Smesharik followee = commonService.getCurrentSmesharik();
 
         return getPaginatedFriends(
+                nameOrLogin,
                 page,
                 size,
                 FriendStatus.NEW,
@@ -191,11 +210,13 @@ public class FriendService {
     }
 
     public PaginatedResponse<FriendResponse> getFollows(
+            String nameOrLogin,
             @Min(value = 0) Integer page, @Min(value = 1) @Max(value = 50) Integer size
     ) {
         Smesharik follower = commonService.getCurrentSmesharik();
 
         return getPaginatedFriends(
+                nameOrLogin,
                 page,
                 size,
                 FriendStatus.NEW,
@@ -205,17 +226,16 @@ public class FriendService {
     }
 
     public PaginatedResponse<FriendResponse> getPaginatedFriends(
-            Integer page, Integer size, FriendStatus friendStatus, Smesharik followee, Smesharik follower
+            String nameOrLogin, Integer page, Integer size, FriendStatus friendStatus, Smesharik followee, Smesharik follower
     ) {
         PageRequest pageRequest = PageRequest.of(
                 page,
                 size
         );
 
-        Page<Friend> resultPage = friendRepository.findByFolloweeOrFollowerAndStatus(
-                followee,
-                follower,
-                friendStatus,
+        Page<Friend> resultPage = friendRepository.findAll(
+                FriendSpecification.hasNameOrLogin(nameOrLogin)
+                        .and(FriendSpecification.hasStatusaAndId(friendStatus, followee, follower)),
                 pageRequest);
 
         List<FriendResponse> content = resultPage.getContent().stream()
@@ -229,5 +249,30 @@ public class FriendService {
                 resultPage.getNumber(),
                 resultPage.getSize()
         );
+    }
+
+    public boolean isFriendsOrAdminId(Long author, Long id) {
+        return (author.equals(id) ||
+                commonService.getCurrentSmesharik().getRole().equals(SmesharikRole.ADMIN) ||
+                areFriendsId(author, id));
+    }
+
+    private boolean areFriendsId(Long author, Long id) {
+        Pair<Smesharik, Smesharik> pair = getSmeshariksById(
+                author,
+                id
+        );
+        Smesharik followee = pair.getLeft();
+        Smesharik follower = pair.getRight();
+
+        Friend friends1 = friendRepository.findByFollowerAndFollowee(follower, followee).orElse(null);
+        Friend friends2 = friendRepository.findByFollowerAndFollowee(followee, follower).orElse(null);
+        if (friends1 != null) {
+            return friends1.getStatus() == FriendStatus.FRIENDS;
+        } else if (friends2 != null) {
+            return friends2.getStatus() == FriendStatus.FRIENDS;
+        }
+
+        return false;
     }
 }

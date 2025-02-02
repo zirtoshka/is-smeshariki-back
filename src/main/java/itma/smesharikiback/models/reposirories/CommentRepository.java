@@ -16,26 +16,33 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpec
     List<Comment> findByPost(Post post);
     List<Comment> findByParentComment(Comment parentComment);
 
-    @Query("SELECT new itma.smesharikiback.models.dto.CommentWithChildrenDto(c.id, c.smesharik.id, c.post.id, " +
-            "c.creationDate, c.parentComment.id, c.text, " +
+    @Query("SELECT new itma.smesharikiback.models.dto.CommentWithChildrenDto(" +
+            "c.id, s, p, " + // Используем псевдонимы s, p, pc
+            "c.creationDate, pc, c.text, " +
             "CASE WHEN EXISTS (SELECT 1 FROM Comment c2 WHERE c2.parentComment = c) THEN true ELSE false END, " +
-            "COUNT(cl)) " +
+            "COUNT(cl.id)) " +
             "FROM Comment c " +
-            "LEFT JOIN Carrot cl ON cl.comment = c " +
+            "LEFT JOIN c.smesharik s " + // LEFT JOIN для smesharik
+            "LEFT JOIN c.post p " +      // LEFT JOIN для post
+            "LEFT JOIN c.parentComment pc " + // LEFT JOIN для parentComment
+            "LEFT JOIN Carrot cl ON cl.comment = c " + // Существующий LEFT JOIN для Carrot
             "WHERE c.id = :id " +
-            "GROUP BY c.id")
+            "GROUP BY c.id, s, p, pc, c.creationDate, c.text")
     Optional<CommentWithChildrenDto> findByIdWithChildren(Long id);
 
-    @Query("SELECT new itma.smesharikiback.models.dto.CommentWithChildrenDto(c.id, c.smesharik.id, c.post.id, " +
-            "c.creationDate, c.parentComment.id, c.text, " +
+    @Query("SELECT new itma.smesharikiback.models.dto.CommentWithChildrenDto(c.id, c.smesharik, c.post, " +
+            "c.creationDate, c.parentComment, c.text, " +
             "CASE WHEN EXISTS (SELECT 1 FROM Comment c2 WHERE c2.parentComment = c) THEN true ELSE false END, " +
             "COUNT(cl) ) " +
             "FROM Comment c " +
+            "LEFT JOIN c.smesharik s " + // LEFT JOIN для smesharik
+            "LEFT JOIN c.post p " +      // LEFT JOIN для post
+            "LEFT JOIN c.parentComment pc " + // LEFT JOIN для parentComment
             "LEFT JOIN Carrot cl ON cl.comment = c " +
             "LEFT JOIN CommentBan b ON c.id = b.id " +
             "WHERE (b.endDate <= current_timestamp OR b.id IS NULL) " +
             "AND (c.post = :post OR c.parentComment = :comment) " +
-            "GROUP BY c.id " +
+            "GROUP BY c.id, c.smesharik, c.post, c.parentComment " +
             "ORDER BY c.creationDate DESC")
     Page<CommentWithChildrenDto> findCommentsByPostOrParentComment(Post post, Comment comment, Pageable pageRequest);
 

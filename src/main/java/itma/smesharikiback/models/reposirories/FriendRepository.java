@@ -5,6 +5,7 @@ import itma.smesharikiback.models.FriendStatus;
 import itma.smesharikiback.models.Smesharik;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -27,6 +28,7 @@ public interface FriendRepository extends JpaRepository<Friend, Long>, JpaSpecif
             @Param("followee") Smesharik followee,
             @Param("follower") Smesharik follower,
             @Param("status") FriendStatus status,
+            Specification<Friend> specification,
             Pageable pageable
     );
 }

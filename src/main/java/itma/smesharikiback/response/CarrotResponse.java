@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 public class CarrotResponse {
     private Long id;
-    private Long smesharik;
+    private String smesharik;
     private Long post;
     private Long comment;
     private LocalDateTime creationDate = LocalDateTime.now();

@@ -116,3 +116,12 @@ INSERT INTO application_for_treatment (comment_id, doctor_id, status)
 VALUES (1, 6, 'NEW'),
     (2, 1, 'NEW'),
     (3, 6, 'NEW');
+
+INSERT INTO application_for_treatment_propensity (application_for_treatment_id, propensity_id)
+VALUES (1, 1),
+       (1, 2),
+       (1, 4),
+       (2, 2),
+       (3, 2),
+       (4, 2),
+       (5, 3);

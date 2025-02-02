@@ -1,5 +1,6 @@
 package itma.smesharikiback.controllers;
 
+import itma.smesharikiback.models.GeneralStatus;
 import itma.smesharikiback.requests.ApplicationForTreatmentRequest;
 import itma.smesharikiback.response.ApplicationForTreatmentResponse;
 import itma.smesharikiback.response.PaginatedResponse;
@@ -10,6 +11,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/application")
@@ -34,12 +37,13 @@ public class ApplicationForTreatmentController {
 
     @GetMapping
     public PaginatedResponse<ApplicationForTreatmentResponse> getAll(
-            @RequestParam(required = false, defaultValue = "") String filter,
+            @RequestParam(required = false) List<GeneralStatus> statuses,
+            @RequestParam(required = false) Boolean isMine,
             @RequestParam(required = false, defaultValue = "id") String sortField,
             @RequestParam(required = false, defaultValue = "true") @NotNull Boolean ascending,
             @RequestParam(required = false, defaultValue = "0") @Min(value = 0) Integer page,
             @RequestParam(required = false, defaultValue = "10") @Min(value = 1) @Max(value = 50) Integer size
     ) {
-        return applicationForTreatmentService.getAll(filter, sortField, ascending, page, size);
+        return applicationForTreatmentService.getAll(statuses, isMine, sortField, ascending, page, size);
     }
 }

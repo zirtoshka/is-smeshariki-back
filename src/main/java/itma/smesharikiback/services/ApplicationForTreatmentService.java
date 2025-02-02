@@ -1,10 +1,10 @@
 package itma.smesharikiback.services;
 
+import itma.smesharikiback.models.*;
+import itma.smesharikiback.models.reposirories.SmesharikRepository;
+import itma.smesharikiback.specification.ApplicationSpecification;
 import itma.smesharikiback.specification.PaginationSpecification;
 import itma.smesharikiback.exceptions.GeneralException;
-import itma.smesharikiback.models.ApplicationForTreatment;
-import itma.smesharikiback.models.Comment;
-import itma.smesharikiback.models.Post;
 import itma.smesharikiback.models.reposirories.ApplicationForTreatmentRepository;
 import itma.smesharikiback.models.reposirories.CommentRepository;
 import itma.smesharikiback.models.reposirories.PostRepository;
@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ public class ApplicationForTreatmentService {
     private final ApplicationForTreatmentRepository applicationForTreatmentRepository;
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final SmesharikRepository smesharikRepository;
 
     public ApplicationForTreatmentResponse updateApplicationForTreatment(
             Long id,
@@ -70,8 +72,14 @@ public class ApplicationForTreatmentService {
             applicationForTreatment.setPost(post.get());
         }
 
+        Smesharik doctor = smesharikRepository.findByLogin(applicationForTreatmentRequest.getDoctor()).orElse(null);
+        if (doctor != null && !doctor.getRole().equals(SmesharikRole.DOCTOR)) {
+            map.put("doctor", "Данный doctor не является доктором на самом деле.");
+            throw new GeneralException(HttpStatus.BAD_REQUEST, map);
+        }
+
         applicationForTreatment.setStatus(applicationForTreatmentRequest.getStatus());
-        applicationForTreatment.setDoctor(commonService.getCurrentSmesharik());
+        applicationForTreatment.setDoctor(doctor);
 
         return buildResponse(applicationForTreatmentRepository.save(applicationForTreatment));
     }
@@ -97,16 +105,20 @@ public class ApplicationForTreatmentService {
         ApplicationForTreatmentResponse response = new ApplicationForTreatmentResponse();
         if (applicationForTreatment.getPost() != null) response.setPost(applicationForTreatment.getPost().getId());
         if (applicationForTreatment.getComment() != null) response.setComment(applicationForTreatment.getComment().getId());
-        if (applicationForTreatment.getDoctor() != null) response.setDoctor(applicationForTreatment.getDoctor().getId());
+        if (applicationForTreatment.getDoctor() != null) response.setDoctor(applicationForTreatment.getDoctor().getLogin());
 
         return response
                 .setId(applicationForTreatment.getId())
-                .setStatus(applicationForTreatment.getStatus());
+                .setStatus(applicationForTreatment.getStatus())
+                .setPropensities(applicationForTreatment.getPropensities().stream()
+                        .map(propensity -> propensity.getPropensity().getId())
+                        .collect(Collectors.toList()));
 
     }
 
     public PaginatedResponse<ApplicationForTreatmentResponse> getAll(
-            String filter,
+            List<GeneralStatus> statuses,
+            Boolean isMine,
             String sortField,
             @NotNull Boolean ascending,
             @Min(value = 0) Integer page,
@@ -120,7 +132,7 @@ public class ApplicationForTreatmentService {
         );
 
         Page<ApplicationForTreatment> resultPage = applicationForTreatmentRepository.findAll(
-                PaginationSpecification.filterByMultipleFields(filter), pageRequest);
+                ApplicationSpecification.getComplaints(statuses, isMine, commonService.getCurrentSmesharik()), pageRequest);
 
 
         List<ApplicationForTreatmentResponse> content = resultPage.getContent().stream()

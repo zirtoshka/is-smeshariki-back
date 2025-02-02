@@ -5,6 +5,8 @@ import lombok.Data;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.List;
+
 @Data
 @Entity
 @Table(name = "application_for_treatment")
@@ -31,4 +33,7 @@ public class ApplicationForTreatment {
     @JoinColumn(name = "doctor_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Smesharik doctor;
+
+    @OneToMany(mappedBy = "applicationForTreatment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ApplicationForTreatmentPropensity> propensities;
 }

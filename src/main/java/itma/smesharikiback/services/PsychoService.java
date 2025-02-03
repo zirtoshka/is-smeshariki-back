@@ -26,8 +26,6 @@ public class PsychoService {
     private final BlockingQueue<Comment> commentQueue = new LinkedBlockingQueue<>();
     private final TriggerWordRepository triggerWordRepository;
     private final PostTriggerWordRepository postTriggerWordRepository;
-    private final ApplicationForTreatmentRepository applicationForTreatmentRepository;
-    private final ApplicationForTreatmentPropensityRepository applicationForTreatmentPropensityRepository;
     private final CommentTriggerWordRepository commentTriggerWordRepository;
 
     static final Logger LOGGER =

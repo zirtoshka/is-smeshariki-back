@@ -199,6 +199,8 @@ CREATE INDEX post_author_idx ON post (author_id);
 CREATE INDEX friend_follower_idx ON friend (follower_id);
 CREATE INDEX friend_followee_idx ON friend (followee_id);
 
+CREATE INDEX smesharik_last_active_idx ON smesharik(last_active);
+
 -- bans
 create materialized view if not exists smesharik_ban as
 select s.id, b.end_date from smesharik s

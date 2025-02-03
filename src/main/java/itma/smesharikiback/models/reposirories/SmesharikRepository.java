@@ -2,10 +2,12 @@ package itma.smesharikiback.models.reposirories;
 
 
 import itma.smesharikiback.models.Smesharik;
+import jakarta.persistence.Tuple;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,4 +39,17 @@ public interface SmesharikRepository extends JpaRepository<Smesharik, Long>, Jpa
             "where s.is_online = true and s.last_active + interval '5 minutes' < now()",
             nativeQuery = true)
     void updateIsOnline();
+
+    @Query("SELECT f.follower AS user, f.followee AS friend " +
+            "FROM Friend f " +
+            "WHERE f.status = 'FRIENDS' " +
+            "AND f.follower IN :users " +
+            "UNION ALL " +
+            "SELECT f.followee AS user, f.follower AS friend " +
+            "FROM Friend f " +
+            "WHERE f.status = 'FRIENDS' " +
+            "AND f.followee IN :users ")
+    List<Tuple> findFriendsForUsers(@Param("users") List<Smesharik> users);
+
+    List<Smesharik> findByLastActiveBefore(LocalDateTime threeDaysAgo);
 }

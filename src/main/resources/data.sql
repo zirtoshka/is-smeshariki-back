@@ -1,13 +1,13 @@
-INSERT INTO smesharik (name, login, password, email, role, is_online)
+INSERT INTO smesharik (name, login, password, email, role, is_online, last_active)
 VALUES
-    ('Совунья', 'sovunya', '$2a$12$572hV1YC5TWxACAgTSVTJeAF6CQ/3b31C4P2HNExgbv/qd26E8gcq', 'sovunya@example.com', 'DOCTOR', true),
-    ('Крош', 'krosh', '$2a$12$RZLDarMx6np2nXGUmDdxzuRWr7ofIUXvQa8WJiXlsIWc1zrzucXMa', 'krosh@example.com', 'USER', false),
-    ('Копатыч', 'kopatych', '$2a$12$i0pQgE3hOCd5qmQBtkDewOk5D/lWjjIW8TGcy87LGc6hosbh.pb3m', 'kopatych@example.com', 'ADMIN', true),
-    ('Лосяш', 'losyash', '$2a$12$IWePMWXbo4QsMzLKiSYDuuUGLAH12r5UKBY87lJJhqHXgQ5Jz7v4G', 'losyash@example.com', 'USER', false),
-    ('Ежик', 'ezhik', '$2a$12$QM30TYscVKxacXIvSpBhXuQ77zqWx3xt9hspTQs0P.2IqD4N7YvM6', 'ezhik@example.com', 'USER', true),
-    ('Пин', 'pin', '$2a$12$vZVmv6osHJ/34EhuT9bvN.WHOuCKblgc9m9CTE1xcqtwthySC.cvG', 'pin@example.com', 'DOCTOR', true),
-    ('Нюша', 'nusha', '$2a$12$bTN4O6ZjbQP4bwnyFKU4Wexf8blrsO09CmGiL0UK2L2/gPIjpChQS', 'nusha@example.com', 'USER', false),
-    ('Бараш', 'barash', '$2a$12$BZNd5XuGR5IugXHpfCK4veRqzvWzDk1BcGRN6M0UJRnYGXl1Kwdk2', 'barash@example.com', 'USER', true);
+    ('Совунья', 'sovunya', '$2a$12$572hV1YC5TWxACAgTSVTJeAF6CQ/3b31C4P2HNExgbv/qd26E8gcq', 'sovunya@example.com', 'DOCTOR', true, CURRENT_TIMESTAMP  - interval '5 days'),
+    ('Крош', 'krosh', '$2a$12$RZLDarMx6np2nXGUmDdxzuRWr7ofIUXvQa8WJiXlsIWc1zrzucXMa', 'andreivydra@yandex.ru', 'USER', false, CURRENT_TIMESTAMP  - interval '1 days'),
+    ('Копатыч', 'kopatych', '$2a$12$i0pQgE3hOCd5qmQBtkDewOk5D/lWjjIW8TGcy87LGc6hosbh.pb3m', 'zirtoshka@yandex.ru', 'ADMIN', false, CURRENT_TIMESTAMP  - interval '1 days'),
+    ('Лосяш', 'losyash', '$2a$12$IWePMWXbo4QsMzLKiSYDuuUGLAH12r5UKBY87lJJhqHXgQ5Jz7v4G', 'losyash@example.com', 'USER', false, CURRENT_TIMESTAMP  - interval '1 days'),
+    ('Ежик', 'ezhik', '$2a$12$QM30TYscVKxacXIvSpBhXuQ77zqWx3xt9hspTQs0P.2IqD4N7YvM6', 'ezhik@example.com', 'USER', true, CURRENT_TIMESTAMP  - interval '1 days'),
+    ('Пин', 'pin', '$2a$12$vZVmv6osHJ/34EhuT9bvN.WHOuCKblgc9m9CTE1xcqtwthySC.cvG', 'pin@example.com', 'DOCTOR', true, CURRENT_TIMESTAMP  - interval '1 days'),
+    ('Нюша', 'nusha', '$2a$12$bTN4O6ZjbQP4bwnyFKU4Wexf8blrsO09CmGiL0UK2L2/gPIjpChQS', 'nusha@example.com', 'USER', false, CURRENT_TIMESTAMP  - interval '1 days'),
+    ('Бараш', 'barash', '$2a$12$BZNd5XuGR5IugXHpfCK4veRqzvWzDk1BcGRN6M0UJRnYGXl1Kwdk2', 'barash@example.com', 'USER', true, CURRENT_TIMESTAMP  - interval '5 days');
 
 INSERT INTO friend (followee_id, follower_id, status)
 VALUES
@@ -15,7 +15,7 @@ VALUES
     (3, 1, 'FRIENDS'), -- Копатыч и Совунья друзья
     (4, 5, 'NEW'), -- Лосяш и Ежик заявка
     (7, 6, 'FRIENDS'), -- Нюша и Пин друзья
-    (3, 8, 'NEW'); -- Копатыч и Бараш заявка
+    (3, 8, 'FRIENDS'); -- Копатыч и Бараш заявка
 
 INSERT INTO post (author_id, is_draft, text, private, path_to_image)
 VALUES

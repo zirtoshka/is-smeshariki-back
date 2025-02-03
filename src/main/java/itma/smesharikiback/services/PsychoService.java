@@ -10,11 +10,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
 
 import static com.github.demidko.aot.WordformMeaning.lookupForMeanings;
 
@@ -59,35 +58,23 @@ public class PsychoService {
             ArrayList<String> text = pair.getLeft();
             HashMap<String, TriggerWord> words = pair.getRight();
 
-            ArrayList<PostTriggerWord> postTriggerWords = new ArrayList<>();
+            HashSet<TriggerWord> usedWords = postTriggerWordRepository.findByPostId(task.getId())
+                    .stream()
+                    .map(PostTriggerWord::getTriggerWord)
+                    .collect(Collectors.toCollection(HashSet::new));;
+
             for (String word : text) {
                 List<WordformMeaning> meanings = lookupForMeanings(word);
                 if (!meanings.isEmpty()) {
                     String lemma = String.valueOf(meanings.getFirst().getLemma());
-                    if (words.containsKey(lemma)) {
+                    if (words.containsKey(lemma) && !usedWords.contains(words.get(lemma))) {
                         PostTriggerWord postTriggerWord = new PostTriggerWord();
                         postTriggerWord.setPost(task);
                         postTriggerWord.setTriggerWord(words.get(lemma));
-                        postTriggerWords.add(postTriggerWordRepository.save(postTriggerWord));
+                        postTriggerWordRepository.save(postTriggerWord);
+                        usedWords.add(words.get(lemma));
                     }
                 }
-            }
-
-            if (!postTriggerWords.isEmpty()) {
-                ApplicationForTreatment applicationForTreatment = new ApplicationForTreatment();
-                applicationForTreatment.setPost(task);
-                applicationForTreatment.setStatus(GeneralStatus.NEW);
-                applicationForTreatmentRepository.save(applicationForTreatment);
-
-                for (PostTriggerWord postTriggerWord : postTriggerWords) {
-                    ApplicationForTreatmentPropensity applicationForTreatmentPropensity =
-                            new ApplicationForTreatmentPropensity();
-                    applicationForTreatmentPropensity.setPropensity(postTriggerWord.getTriggerWord().getPropensity());
-                    applicationForTreatmentPropensity.setApplicationForTreatment(applicationForTreatment);
-                    applicationForTreatmentPropensityRepository.save(applicationForTreatmentPropensity);
-                }
-                System.out.println("Создана заявка на лечение по посту: " + task);
-
             }
 
         } catch (InterruptedException e) {
@@ -108,35 +95,23 @@ public class PsychoService {
             ArrayList<String> text = pair.getLeft();
             HashMap<String, TriggerWord> words = pair.getRight();
 
-            ArrayList<CommentTriggerWord> commentTriggerWords = new ArrayList<>();
+            HashSet<TriggerWord> usedWords = commentTriggerWordRepository.findByCommentId(task.getId())
+                    .stream()
+                    .map(CommentTriggerWord::getTriggerWord)
+                    .collect(Collectors.toCollection(HashSet::new));
+
             for (String word : text) {
                 List<WordformMeaning> meanings = lookupForMeanings(word);
                 if (!meanings.isEmpty()) {
                     String lemma = String.valueOf(meanings.getFirst().getLemma());
-                    if (words.containsKey(lemma)) {
+                    if (words.containsKey(lemma) && !usedWords.contains(words.get(lemma))) {
                         CommentTriggerWord commentTriggerWord = new CommentTriggerWord();
                         commentTriggerWord.setComment(task);
                         commentTriggerWord.setTriggerWord(words.get(lemma));
-                        commentTriggerWords.add(commentTriggerWordRepository.save(commentTriggerWord));
+                        commentTriggerWordRepository.save(commentTriggerWord);
+                        usedWords.add(words.get(lemma));
                     }
                 }
-            }
-
-            if (!commentTriggerWords.isEmpty()) {
-                ApplicationForTreatment applicationForTreatment = new ApplicationForTreatment();
-                applicationForTreatment.setComment(task);
-                applicationForTreatment.setStatus(GeneralStatus.NEW);
-                applicationForTreatmentRepository.save(applicationForTreatment);
-
-                for (CommentTriggerWord commentTriggerWord : commentTriggerWords) {
-                    ApplicationForTreatmentPropensity applicationForTreatmentPropensity =
-                            new ApplicationForTreatmentPropensity();
-                    applicationForTreatmentPropensity.setPropensity(commentTriggerWord.getTriggerWord().getPropensity());
-                    applicationForTreatmentPropensity.setApplicationForTreatment(applicationForTreatment);
-                    applicationForTreatmentPropensityRepository.save(applicationForTreatmentPropensity);
-                }
-                System.out.println("Создана заявка на лечение по комменту: " + task);
-
             }
 
         } catch (InterruptedException e) {

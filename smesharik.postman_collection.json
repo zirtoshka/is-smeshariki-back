@@ -345,7 +345,7 @@
 								},
 								{
 									"key": "text",
-									"value": "убить, казнить, !  курить",
+									"value": "убить, ударил казнить, !  курить суицидальный петли аморальная",
 									"type": "text"
 								},
 								{
@@ -571,7 +571,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"text\": \"comment полюбить убью\",\r\n    \"post\": null,\r\n    \"parentComment\": 7\r\n}",
+							"raw": "{\r\n    \"text\": \"comment полюбить убью\",\r\n    \"post\": 10,\r\n    \"parentComment\": null\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1895,7 +1895,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8081/api/application?isMine=true&sortField=id&ascending=false&page=0&size=2",
+							"raw": "http://localhost:8081/api/application?sortField=id&ascending=false&page=0&size=2",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1908,7 +1908,8 @@
 							"query": [
 								{
 									"key": "isMine",
-									"value": "true"
+									"value": "true",
+									"disabled": true
 								},
 								{
 									"key": "sortField",

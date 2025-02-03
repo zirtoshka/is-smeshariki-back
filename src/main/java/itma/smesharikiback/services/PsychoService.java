@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static com.github.demidko.aot.WordformMeaning.lookupForMeanings;
@@ -28,6 +29,9 @@ public class PsychoService {
     private final ApplicationForTreatmentRepository applicationForTreatmentRepository;
     private final ApplicationForTreatmentPropensityRepository applicationForTreatmentPropensityRepository;
     private final CommentTriggerWordRepository commentTriggerWordRepository;
+
+    static final Logger LOGGER =
+            Logger.getLogger(PsychoService.class.getName());
 
     public void addToPostQueue(Post task) {
         try {
@@ -52,7 +56,7 @@ public class PsychoService {
         try {
 
             Post task = postQueue.take();
-            System.out.println("Обработка поста: " + task);
+            LOGGER.info("Обработка поста: " + task);
 
             Pair<ArrayList<String>, HashMap<String, TriggerWord>> pair = getTriggerWordsWithTextWords(task.getText());
             ArrayList<String> text = pair.getLeft();
@@ -89,7 +93,7 @@ public class PsychoService {
         try {
 
             Comment task = commentQueue.take();
-            System.out.println("Обработка коммента: " + task);
+            LOGGER.info("Обработка коммента: " + task);
 
             Pair<ArrayList<String>, HashMap<String, TriggerWord>> pair = getTriggerWordsWithTextWords(task.getText());
             ArrayList<String> text = pair.getLeft();

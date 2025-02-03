@@ -2,6 +2,7 @@ package itma.smesharikiback.auth;
 
 import itma.smesharikiback.models.Smesharik;
 import itma.smesharikiback.models.SmesharikRole;
+import itma.smesharikiback.models.reposirories.SmesharikRepository;
 import itma.smesharikiback.requests.smesharik.SmesharikSignInRequest;
 import itma.smesharikiback.requests.smesharik.SmesharikSignUpRequest;
 import itma.smesharikiback.services.CommonService;
@@ -20,6 +21,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final SmesharikRepository smesharikRepository;
 
     public JwtAuthenticationResponse signUp(SmesharikSignUpRequest request) {
 
@@ -49,7 +51,8 @@ public class AuthenticationService {
 
         var user = commonService
                 .getByLogin(request.getLogin());
-
+        user.setIsOnline(true);
+        smesharikRepository.save(user);
 
         var jwt = jwtService.generateToken(user);
         return new JwtAuthenticationResponse(jwt, "OK");

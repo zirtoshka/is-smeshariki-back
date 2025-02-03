@@ -227,7 +227,7 @@ where b.end_date > now();
 --  CREATE TRIGGER trigger_update_last_active
 --  BEFORE UPDATE on smesharik
 --  FOR EACH ROW
---  WHEN ( NEW.is_online = false and OLD.is_online IS DISTINCT FROM NEW.is_online )
+--  WHEN ( NEW.is_online = true )
 --  EXECUTE FUNCTION update_last_active();
 --
 --  CREATE OR REPLACE FUNCTION update_publication_time()

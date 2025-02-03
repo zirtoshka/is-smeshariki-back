@@ -63,7 +63,7 @@ public class PsychoService {
             HashSet<TriggerWord> usedWords = postTriggerWordRepository.findByPostId(task.getId())
                     .stream()
                     .map(PostTriggerWord::getTriggerWord)
-                    .collect(Collectors.toCollection(HashSet::new));;
+                    .collect(Collectors.toCollection(HashSet::new));
 
             for (String word : text) {
                 List<WordformMeaning> meanings = lookupForMeanings(word);

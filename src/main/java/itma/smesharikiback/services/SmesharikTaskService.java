@@ -3,7 +3,6 @@ package itma.smesharikiback.services;
 import itma.smesharikiback.models.Smesharik;
 import itma.smesharikiback.models.reposirories.SmesharikRepository;
 import jakarta.persistence.Tuple;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.scheduling.annotation.Async;

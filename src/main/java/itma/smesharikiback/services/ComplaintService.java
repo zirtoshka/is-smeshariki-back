@@ -58,7 +58,7 @@ public class ComplaintService {
                 throw new GeneralException(HttpStatus.BAD_REQUEST, errors);
             }
             complaint.setAdmin(admin.get());
-        }
+        } else complaint.setAdmin(null);
 
         if (Stream.of(
                 complaintRequest.getComment(),
@@ -75,6 +75,7 @@ public class ComplaintService {
                 throw new GeneralException(HttpStatus.BAD_REQUEST, errors);
             }
             complaint.setPost(post.get());
+            complaint.setComment(null);
         } else {
             Optional<Comment> comment = commentRepository.findById(complaintRequest.getComment());
             if (comment.isEmpty()) {
@@ -82,6 +83,7 @@ public class ComplaintService {
                 throw new GeneralException(HttpStatus.BAD_REQUEST, errors);
             }
             complaint.setComment(comment.get());
+            complaint.setPost(null);
         }
 
         complaint.setCreationDate(complaintRequest.getCreationDate());

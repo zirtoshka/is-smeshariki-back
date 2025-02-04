@@ -60,6 +60,7 @@ public class ApplicationForTreatmentService {
                 throw new GeneralException(HttpStatus.BAD_REQUEST, map);
             }
             applicationForTreatment.setComment(comment.get());
+            applicationForTreatment.setPost(null);
         } else {
             Optional<Post> post =
                     postRepository.findById(applicationForTreatmentRequest.getPost());
@@ -68,6 +69,7 @@ public class ApplicationForTreatmentService {
                 throw new GeneralException(HttpStatus.BAD_REQUEST, map);
             }
             applicationForTreatment.setPost(post.get());
+            applicationForTreatment.setComment(null);
         }
 
         Smesharik doctor = smesharikRepository.findByLogin(applicationForTreatmentRequest.getDoctor()).orElse(null);

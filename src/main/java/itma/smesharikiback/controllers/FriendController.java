@@ -5,6 +5,7 @@ import itma.smesharikiback.requests.FriendRequest;
 import itma.smesharikiback.response.FriendResponse;
 import itma.smesharikiback.response.MessageResponse;
 import itma.smesharikiback.response.PaginatedResponse;
+import itma.smesharikiback.response.SmesharikResponse;
 import itma.smesharikiback.services.FriendService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -41,7 +42,7 @@ public class FriendController {
     }
 
     @GetMapping
-    public PaginatedResponse<FriendResponse> getFriends(
+    public PaginatedResponse<SmesharikResponse> getFriends(
             @RequestParam(required = false, defaultValue = "") String nameOrLogin,
             @RequestParam(required = false, defaultValue = "0") @Min(value = 0) Integer page,
             @RequestParam(required = false, defaultValue = "10") @Min(value = 1) @Max(value = 50) Integer size
@@ -50,7 +51,7 @@ public class FriendController {
     }
 
     @GetMapping("/followers")
-    public PaginatedResponse<FriendResponse> getFollowers(
+    public PaginatedResponse<SmesharikResponse> getFollowers(
             @RequestParam(required = false, defaultValue = "") String nameOrLogin,
             @RequestParam(required = false, defaultValue = "0") @Min(value = 0) Integer page,
             @RequestParam(required = false, defaultValue = "10") @Min(value = 1) @Max(value = 50) Integer size
@@ -59,7 +60,7 @@ public class FriendController {
     }
 
     @GetMapping("/follows")
-    public PaginatedResponse<FriendResponse> getFollows(
+    public PaginatedResponse<SmesharikResponse> getFollows(
             @RequestParam(required = false, defaultValue = "") String nameOrLogin,
             @RequestParam(required = false, defaultValue = "0") @Min(value = 0) Integer page,
             @RequestParam(required = false, defaultValue = "10") @Min(value = 1) @Max(value = 50) Integer size

@@ -11,6 +11,7 @@ import itma.smesharikiback.requests.FriendRequest;
 import itma.smesharikiback.response.FriendResponse;
 import itma.smesharikiback.response.MessageResponse;
 import itma.smesharikiback.response.PaginatedResponse;
+import itma.smesharikiback.response.SmesharikResponse;
 import itma.smesharikiback.specification.FriendSpecification;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -168,7 +169,7 @@ public class FriendService {
         return false;
     }
 
-    public FriendResponse buildResponse(Friend friend) {
+    private FriendResponse buildResponse(Friend friend) {
         return new FriendResponse()
                 .setId(friend.getId())
                 .setFollowee(friend.getFollowee().getLogin())
@@ -176,9 +177,19 @@ public class FriendService {
                 .setStatus(friend.getStatus());
     }
 
+    private SmesharikResponse buildResponse(Smesharik smesharik) {
+        return new SmesharikResponse()
+                .setName(smesharik.getName())
+                .setLogin(smesharik.getLogin())
+                .setEmail(smesharik.getEmail())
+                .setRole(smesharik.getRole())
+                .setIsOnline(smesharik.getIsOnline())
+                .setColor(smesharik.getColor());
+    }
+
 
     @Transactional
-    public PaginatedResponse<FriendResponse> getFriends(
+    public PaginatedResponse<SmesharikResponse> getFriends(
             String nameOrLogin,
             @Min(value = 0) Integer page, @Min(value = 1) @Max(value = 50) Integer size
     ) {
@@ -193,7 +204,7 @@ public class FriendService {
         );
     }
 
-    public PaginatedResponse<FriendResponse> getFollowers(
+    public PaginatedResponse<SmesharikResponse> getFollowers(
             String nameOrLogin,
             @Min(value = 0) Integer page, @Min(value = 1) @Max(value = 50) Integer size
     ) {
@@ -209,7 +220,7 @@ public class FriendService {
         );
     }
 
-    public PaginatedResponse<FriendResponse> getFollows(
+    public PaginatedResponse<SmesharikResponse> getFollows(
             String nameOrLogin,
             @Min(value = 0) Integer page, @Min(value = 1) @Max(value = 50) Integer size
     ) {
@@ -225,7 +236,7 @@ public class FriendService {
         );
     }
 
-    public PaginatedResponse<FriendResponse> getPaginatedFriends(
+    public PaginatedResponse<SmesharikResponse> getPaginatedFriends(
             String nameOrLogin, Integer page, Integer size, FriendStatus friendStatus, Smesharik followee, Smesharik follower
     ) {
         PageRequest pageRequest = PageRequest.of(
@@ -238,8 +249,15 @@ public class FriendService {
                         .and(FriendSpecification.hasStatusaAndId(friendStatus, followee, follower)),
                 pageRequest);
 
-        List<FriendResponse> content = resultPage.getContent().stream()
-                .map(this::buildResponse)
+        Smesharik currentSmesharik = commonService.getCurrentSmesharik();
+
+        List<SmesharikResponse> content = resultPage.getContent().stream()
+                .map(friend -> {
+                    Smesharik smesharik = friend.getFollower().equals(currentSmesharik)
+                            ? friend.getFollowee()
+                            : friend.getFollower();
+                    return buildResponse(smesharik);
+                })
                 .collect(Collectors.toList());
 
         return new PaginatedResponse<>(

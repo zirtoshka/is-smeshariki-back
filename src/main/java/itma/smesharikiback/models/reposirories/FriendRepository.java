@@ -32,4 +32,5 @@ public interface FriendRepository extends JpaRepository<Friend, Long>, JpaSpecif
             Pageable pageable
     );
 
+
 }

@@ -59,7 +59,7 @@ public class CarrotService {
     }
 
     public ResponseEntity<?> delete(Long post, Long comment) {
-        Carrot carrot = getCarrot(post, comment);
+        Carrot carrot = getCarrot(comment, post);
 
         carrotRepository.delete(carrot);
 
@@ -72,6 +72,7 @@ public class CarrotService {
         getCarrot(comment, post);
         return new MessageResponse().setMessage("Carrot выставлен.");
     }
+
 
     private Carrot getCarrot(Long comment, Long post) {
         Pair<Comment, Post> pair = commonService.getParentCommentOrPost(comment, post);

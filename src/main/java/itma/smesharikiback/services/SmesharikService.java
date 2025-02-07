@@ -75,6 +75,7 @@ public class SmesharikService {
         Smesharik smesharik = getByLoginPermissions(login);
 
         smesharik.setName(request.getName());
+        smesharik.setColor(request.getColor());
 
         Optional<Smesharik> smesharik1 = repository.findByLogin(login);
         if (smesharik1.isPresent() && !smesharik1.get().equals(smesharik)) {
@@ -88,7 +89,6 @@ public class SmesharikService {
         } else {
             smesharik.setEmail(request.getEmail());
         }
-
         if (!errors.isEmpty()) {
             throw new GeneralException(HttpStatus.BAD_REQUEST, errors);
         }
@@ -135,7 +135,6 @@ public class SmesharikService {
         smesharik.setRole(request.getRole());
         return buildResponse(repository.save(smesharik));
     }
-
 
 
     private SmesharikResponse buildResponse(Smesharik smesharik) {

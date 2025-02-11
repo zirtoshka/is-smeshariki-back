@@ -75,6 +75,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         null,
                         user.getAuthorities()
                 );
+                user.setIsOnline(true);
+                smesharikRepository.save(user);
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 context.setAuthentication(authToken);

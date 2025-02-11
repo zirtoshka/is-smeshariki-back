@@ -51,8 +51,6 @@ public class AuthenticationService {
 
         var user = commonService
                 .getByLogin(request.getLogin());
-        user.setIsOnline(true);
-        smesharikRepository.save(user);
 
         var jwt = jwtService.generateToken(user);
         return new JwtAuthenticationResponse(jwt, "OK");

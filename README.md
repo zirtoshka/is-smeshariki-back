@@ -14,5 +14,8 @@ docker compose up -d minio
    - создать Access Keys с параметрами из `secret.yaml`
 7. поднять бек
 ```bash
+mvn clean package
+```
+```bash
 docker compose up -d --build spring
 ```

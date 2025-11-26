@@ -36,7 +36,7 @@ public class SmesharikTaskService {
     }
 
     @Transactional(readOnly = true)
-    @Scheduled(cron = "0 10 17 * * ?")
+//    @Scheduled(cron = "0 * * * * ?")
     public void searchInactiveUsersFriends() {
         LOGGER.info("Starting inactive users notification");
 

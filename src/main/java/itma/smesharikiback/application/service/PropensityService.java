@@ -1,5 +1,6 @@
 package itma.smesharikiback.application.service;
 
+import itma.smesharikiback.application.mapper.DomainMapper;
 import itma.smesharikiback.infrastructure.specification.PaginationSpecification;
 import itma.smesharikiback.domain.exception.ValidationException;
 import itma.smesharikiback.domain.model.Propensity;
@@ -12,7 +13,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -25,14 +25,15 @@ import java.util.stream.Collectors;
 public class PropensityService {
 
     private final CommonService commonService;
-    private PropensityRepository propensityRepository;
+    private final PropensityRepository propensityRepository;
+    private final DomainMapper domainMapper;
 
     public PropensityResponse createPropensity(PropensityRequest request) {
         commonService.checkIfAdmin();
         Propensity propensity = new Propensity();
         propensity.setName(request.getName());
         propensity.setDescription(request.getDescription());
-        return buildResponse(propensityRepository.save(propensity));
+        return domainMapper.toPropensityResponse(propensityRepository.save(propensity));
     }
 
     public PropensityResponse updatePropensity(Long id, PropensityRequest request) {
@@ -40,7 +41,7 @@ public class PropensityService {
         Propensity propensity = getPropensityById(id);
         propensity.setName(request.getName());
         propensity.setDescription(request.getDescription());
-        return buildResponse(propensityRepository.save(propensity));
+        return domainMapper.toPropensityResponse(propensityRepository.save(propensity));
     }
 
     public MessageResponse deletePropensity(Long id) {
@@ -53,7 +54,7 @@ public class PropensityService {
     public PropensityResponse getPropensity(Long id) {
         commonService.checkIfAdmin();
         Propensity propensity = getPropensityById(id);
-        return buildResponse(propensity);
+        return domainMapper.toPropensityResponse(propensity);
     }
 
     public PaginatedResponse<PropensityResponse> getPropensityAll(
@@ -75,7 +76,7 @@ public class PropensityService {
 
 
         List<PropensityResponse> content = resultPage.getContent().stream()
-                .map(this::buildResponse)
+                .map(domainMapper::toPropensityResponse)
                 .collect(Collectors.toList());
 
         return new PaginatedResponse<>(
@@ -92,30 +93,9 @@ public class PropensityService {
         Optional<Propensity> propensity = propensityRepository.findById(id);
         if (propensity.isEmpty()) {
             HashMap<String, String> errors = new HashMap<>();
-            errors.put("message", "Такая наклонность не найдена.");
-            throw new ValidationException( errors);
+            errors.put("message", "Наклонность не найдена.");
+            throw new ValidationException(errors);
         }
         return propensity.get();
     }
-
-
-    public PropensityResponse buildResponse(Propensity propensity) {
-        return new PropensityResponse()
-                .setId(propensity.getId())
-                .setDescription(propensity.getDescription())
-                .setName(propensity.getName());
-    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

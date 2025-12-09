@@ -1,8 +1,8 @@
 package itma.smesharikiback.presentation.dto.request;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -10,28 +10,13 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class CommentRequest {
 
-    @Min(value = 0, message = "Значение поля y должно быть больше 0")
+    @Positive(message = "Поле post должно быть положительным.")
     private Long post;
 
-    @Min(value = 0, message = "Значение поля y должно быть больше 0")
+    @Positive(message = "Поле parentComment должно быть положительным.")
     private Long parentComment;
 
-    @NotNull(message = "текст не может быть null")
-    @NotBlank(message = "комментарий не может быть пустым")
+    @NotNull(message = "Текст комментария обязателен.")
+    @NotBlank(message = "Текст комментария не может быть пустым.")
     private String text;
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

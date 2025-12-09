@@ -1,6 +1,7 @@
 package itma.smesharikiback.application.service;
 
 import itma.smesharikiback.application.mapper.DomainMapper;
+import itma.smesharikiback.application.policy.FriendPolicy;
 import itma.smesharikiback.domain.exception.DomainException;
 import itma.smesharikiback.domain.exception.ValidationException;
 import itma.smesharikiback.domain.model.Carrot;
@@ -25,7 +26,7 @@ public class CarrotService {
     private final CarrotRepository carrotRepository;
     private final CommonService commonService;
     private final CommentService commentService;
-    private final FriendService friendService;
+    private final FriendPolicy friendPolicy;
     private final DomainMapper domainMapper;
 
     public CarrotResponse create(Long post, Long comment) {
@@ -41,13 +42,14 @@ public class CarrotService {
             smesharik = parentPost.getAuthor();
         }
 
-        if (!friendService.isFriendsOrAdmin(smesharik.getLogin(), commonService.getCurrentSmesharik().getLogin())) {
+        Smesharik currentUser = commonService.getCurrentSmesharik();
+        if (!friendPolicy.isFriendsOrAdmin(smesharik, currentUser)) {
             HashMap<String, String> map = new HashMap<>();
             map.put("message", "Carrot can be added only for friends or by admin.");
             throw new ValidationException(map);
         }
 
-        carrot.setSmesharik(commonService.getCurrentSmesharik());
+        carrot.setSmesharik(currentUser);
         carrot.setPost(parentPost);
         carrot.setComment(parentComment);
 

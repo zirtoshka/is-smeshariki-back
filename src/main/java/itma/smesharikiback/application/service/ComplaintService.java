@@ -1,8 +1,14 @@
 package itma.smesharikiback.application.service;
 
+import itma.smesharikiback.application.mapper.DomainMapper;
 import itma.smesharikiback.infrastructure.specification.ComplaintSpecification;
 import itma.smesharikiback.domain.exception.ValidationException;
-import itma.smesharikiback.domain.model.*;
+import itma.smesharikiback.domain.model.Comment;
+import itma.smesharikiback.domain.model.Complaint;
+import itma.smesharikiback.domain.model.GeneralStatus;
+import itma.smesharikiback.domain.model.Post;
+import itma.smesharikiback.domain.model.Smesharik;
+import itma.smesharikiback.domain.model.SmesharikRole;
 import itma.smesharikiback.domain.repository.CommentRepository;
 import itma.smesharikiback.domain.repository.ComplaintRepository;
 import itma.smesharikiback.domain.repository.PostRepository;
@@ -14,7 +20,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -32,7 +37,8 @@ public class ComplaintService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final CommonService commonService;
-    private ComplaintRepository complaintRepository;
+    private final ComplaintRepository complaintRepository;
+    private final DomainMapper domainMapper;
 
     public ComplaintResponse createComplaint(@Validated ComplaintRequest complaintRequest) {
         Complaint complaint = new Complaint();
@@ -50,37 +56,39 @@ public class ComplaintService {
         if (complaintRequest.getAdmin() != null) {
             Optional<Smesharik> admin = smesharikRepository.findByLogin(complaintRequest.getAdmin());
             if (admin.isEmpty()) {
-                errors.put("admin", "Admin не найден.");
-                throw new ValidationException( errors);
+                errors.put("admin", "Администратор не найден.");
+                throw new ValidationException(errors);
             }
             if (!admin.get().getRole().equals(SmesharikRole.ADMIN)) {
-                errors.put("admin", "User не является admin.");
-                throw new ValidationException( errors);
+                errors.put("admin", "Пользователь не является администратором.");
+                throw new ValidationException(errors);
             }
             complaint.setAdmin(admin.get());
-        } else complaint.setAdmin(null);
+        } else {
+            complaint.setAdmin(null);
+        }
 
         if (Stream.of(
                 complaintRequest.getComment(),
                 complaintRequest.getPost()
         ).filter(Objects::nonNull).count() != 1) {
-            errors.put("message", "Передать надо либо post, либо comment.");
-            throw new ValidationException( errors);
+            errors.put("message", "Нужно указать либо post, либо comment.");
+            throw new ValidationException(errors);
         }
 
         if (complaintRequest.getPost() != null) {
             Optional<Post> post = postRepository.findById(complaintRequest.getPost());
             if (post.isEmpty()) {
-                errors.put("message", "Post не был найден.");
-                throw new ValidationException( errors);
+                errors.put("post", "Пост не найден.");
+                throw new ValidationException(errors);
             }
             complaint.setPost(post.get());
             complaint.setComment(null);
         } else {
             Optional<Comment> comment = commentRepository.findById(complaintRequest.getComment());
             if (comment.isEmpty()) {
-                errors.put("message", "Comment не был найден.");
-                throw new ValidationException( errors);
+                errors.put("comment", "Комментарий не найден.");
+                throw new ValidationException(errors);
             }
             complaint.setComment(comment.get());
             complaint.setPost(null);
@@ -91,12 +99,12 @@ public class ComplaintService {
         complaint.setClosingDate(complaintRequest.getClosingDate());
         complaint.setDescription(complaintRequest.getDescription());
         complaint.setViolationType(complaintRequest.getViolationType());
-        return buildResponse(complaintRepository.save(complaint));
+        return domainMapper.toComplaintResponse(complaintRepository.save(complaint));
     }
 
     public ComplaintResponse getComplaint(Long id) {
         Complaint complaint = getComplaintById(id);
-        return buildResponse(complaint);
+        return domainMapper.toComplaintResponse(complaint);
     }
 
     private Complaint getComplaintById(Long id) {
@@ -104,8 +112,8 @@ public class ComplaintService {
         HashMap<String, String> errors = new HashMap<>();
 
         if (complaint.isEmpty()) {
-            errors.put("message", "Заявка не найдена.");
-            throw new ValidationException( errors);
+            errors.put("message", "Жалоба не найдена.");
+            throw new ValidationException(errors);
         }
 
         commonService.checkIfAdmin();
@@ -133,7 +141,7 @@ public class ComplaintService {
                 pageRequest);
 
         List<ComplaintResponse> content = resultPage.getContent().stream()
-                .map(this::buildResponse)
+                .map(domainMapper::toComplaintResponse)
                 .collect(Collectors.toList());
 
         return new PaginatedResponse<>(
@@ -144,34 +152,4 @@ public class ComplaintService {
                 resultPage.getSize()
         );
     }
-
-    private ComplaintResponse buildResponse(Complaint complaint) {
-        ComplaintResponse complaintResponse = new ComplaintResponse();
-        if (complaint.getAdmin() != null) complaintResponse.setAdmin(complaint.getAdmin().getLogin());
-        if (complaint.getComment() != null) complaintResponse.setComment(complaint.getComment().getId());
-        if (complaint.getPost() != null) complaintResponse.setPost(complaint.getPost().getId());
-
-        return complaintResponse
-                .setId(complaint.getId())
-                .setDescription(complaint.getDescription())
-                .setStatus(complaint.getStatus())
-                .setClosingDate(complaint.getClosingDate())
-                .setCreationDate(complaint.getCreationDate())
-                .setViolationType(complaint.getViolationType());
-    }
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -2,6 +2,7 @@ package itma.smesharikiback.application.service;
 
 import itma.smesharikiback.application.dto.CommentWithChildrenDto;
 import itma.smesharikiback.application.mapper.DomainMapper;
+import itma.smesharikiback.application.policy.FriendPolicy;
 import itma.smesharikiback.domain.exception.AccessDeniedException;
 import itma.smesharikiback.domain.exception.DomainException;
 import itma.smesharikiback.domain.model.Comment;
@@ -32,7 +33,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CommonService commonService;
     private final PsychoService psychoService;
-    private final FriendService friendService;
+    private final FriendPolicy friendPolicy;
     private final DomainMapper domainMapper;
 
     public CommentResponse create(CommentRequest request) {
@@ -49,7 +50,8 @@ public class CommentService {
             smesharik = post.getAuthor();
         }
 
-        if (!friendService.isFriendsOrAdmin(smesharik.getLogin(), commonService.getCurrentSmesharik().getLogin()) ||
+        Smesharik currentSmesharik = commonService.getCurrentSmesharik();
+        if (!friendPolicy.isFriendsOrAdmin(smesharik, currentSmesharik) ||
                 (post != null && (post.getIsDraft() || post.getIsPrivate()))) {
             HashMap<String, String> map = new HashMap<>();
             map.put("message", "No permission to add a comment.");
@@ -60,7 +62,7 @@ public class CommentService {
         comment.setParentComment(parentComment);
         comment.setText(request.getText());
         comment.setCreationDate(new Timestamp(new Date().getTime()).toLocalDateTime());
-        comment.setSmesharik(commonService.getCurrentSmesharik());
+        comment.setSmesharik(currentSmesharik);
         CommentResponse commentResponse = domainMapper.toCommentResponse(commentRepository.save(comment));
         psychoService.addToCommentQueue(comment);
 
@@ -91,9 +93,9 @@ public class CommentService {
         }
 
         Smesharik authorPost = findPostAuthorByComment(comment.get());
-        if (!authorPost.equals(commonService.getCurrentSmesharik()) &&
-                !friendService.areFriends(authorPost.getLogin(),
-                commonService.getCurrentSmesharik().getLogin()) ) {
+        Smesharik currentSmesharik = commonService.getCurrentSmesharik();
+        if (!authorPost.equals(currentSmesharik) &&
+                !friendPolicy.areFriends(authorPost, currentSmesharik) ) {
             map.put("message", "Access denied!");
             throw new AccessDeniedException(map);
         }
@@ -107,11 +109,12 @@ public class CommentService {
         Post post = pair.getRight();
 
         String authorPost = post != null ? post.getAuthor().getLogin() : findPostAuthorByComment(comment).getLogin();
+        Smesharik currentSmesharik = commonService.getCurrentSmesharik();
 
-        if (!authorPost.equals(commonService.getCurrentSmesharik().getLogin()) &&
-                !friendService.areFriends(
-                        authorPost,
-                        commonService.getCurrentSmesharik().getLogin())
+        if (!authorPost.equals(currentSmesharik.getLogin()) &&
+                !friendPolicy.areFriends(
+                        post != null ? post.getAuthor() : findPostAuthorByComment(comment),
+                        currentSmesharik)
         ) {
             map.put("message", "Access denied!");
             throw new AccessDeniedException(map);

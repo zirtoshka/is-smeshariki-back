@@ -8,21 +8,8 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class PropensityRequest {
-    @NotNull(message = "name не может быть пустым.")
-    @NotEmpty(message = "name не должно быть пустым.")
+    @NotNull(message = "Поле name обязательно.")
+    @NotEmpty(message = "Поле name не может быть пустым.")
     private String name;
     private String description;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

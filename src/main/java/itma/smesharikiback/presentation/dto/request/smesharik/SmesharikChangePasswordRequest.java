@@ -7,26 +7,13 @@ import lombok.Data;
 
 @Data
 public class SmesharikChangePasswordRequest {
-    @NotNull(message = "oldPassword не может быть null.")
-    @NotBlank(message = "oldPassword не может быть пустым.")
-    @Size(max = 255, message = "Длина oldPassword должна быть не более 255 символов.")
+    @NotNull(message = "Поле oldPassword обязательно.")
+    @NotBlank(message = "Поле oldPassword не может быть пустым.")
+    @Size(max = 255, message = "Длина oldPassword не должна превышать 255 символов.")
     private String oldPassword;
 
-    @NotNull(message = "password не может быть null.")
-    @NotBlank(message = "password не может быть пустым.")
-    @Size(max = 255, message = "Длина password должна быть не более 255 символов.")
+    @NotNull(message = "Поле newPassword обязательно.")
+    @NotBlank(message = "Поле newPassword не может быть пустым.")
+    @Size(max = 255, message = "Длина newPassword не должна превышать 255 символов.")
     private String newPassword;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

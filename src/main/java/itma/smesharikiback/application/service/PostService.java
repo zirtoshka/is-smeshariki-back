@@ -6,6 +6,7 @@ import io.minio.PutObjectArgs;
 import io.minio.errors.MinioException;
 import itma.smesharikiback.application.dto.PostWithCarrotsDto;
 import itma.smesharikiback.application.mapper.DomainMapper;
+import itma.smesharikiback.application.policy.FriendPolicy;
 import itma.smesharikiback.domain.exception.DomainException;
 import itma.smesharikiback.domain.exception.ValidationException;
 import itma.smesharikiback.domain.model.Post;
@@ -43,7 +44,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final CommonService commonService;
     private final PsychoService psychoService;
-    private final FriendService friendService;
+    private final FriendPolicy friendPolicy;
     private final DomainMapper domainMapper;
     private MinioClient minioClient;
     private String bucketName;
@@ -72,7 +73,7 @@ public class PostService {
         PostWithCarrotsDto post = postRepository.findByIdWithCarrots(id).orElse(null);
 
         try {
-            if (post == null || !friendService.isFriendsOrAdminId(post.getAuthor().getId(), commonService.getCurrentSmesharik().getId())) {
+            if (post == null || !friendPolicy.isFriendsOrAdmin(post.getAuthor(), commonService.getCurrentSmesharik())) {
                 map.put("message", "Post not found.");
                 throw new DomainException(HttpStatus.NOT_FOUND, map);
             }

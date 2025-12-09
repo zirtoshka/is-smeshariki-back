@@ -7,19 +7,6 @@ import lombok.Data;
 
 @Data
 public class SmesharikChangeRoleRequest {
-    @NotNull(message = "role не может быть null.")
+    @NotNull(message = "Поле role обязательно.")
     private SmesharikRole role;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

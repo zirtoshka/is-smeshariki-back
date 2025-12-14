@@ -17,6 +17,7 @@ import itma.smesharikiback.presentation.dto.request.ComplaintRequest;
 import itma.smesharikiback.presentation.dto.response.ComplaintResponse;
 import itma.smesharikiback.presentation.dto.response.PaginatedResponse;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -32,6 +33,7 @@ import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ComplaintService {
     private final SmesharikRepository smesharikRepository;
     private final PostRepository postRepository;
@@ -130,6 +132,8 @@ public class ComplaintService {
             Integer page,
             Integer size
     ) {
+        log.info("Fetching complaints descriptionFilter={} statuses={} isMine={} sortField={} ascending={} page={} size={}",
+                description, statuses, isMine, sortField, ascending, page, size);
         PageRequest pageRequest = PageRequest.of(
                 page,
                 size,

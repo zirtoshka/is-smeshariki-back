@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +26,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public static final String BEARER_PREFIX = "Bearer ";
     public static final String HEADER_NAME = "Authorization";
@@ -40,17 +42,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         if (request.getServletPath().startsWith("/auth")) {
+            log.debug("Skip JWT filter for auth endpoint {}", request.getServletPath());
             filterChain.doFilter(request, response);
             return;
         }
 
         if ("OPTIONS".equals(request.getMethod())) {
+            log.trace("Skip JWT filter for OPTIONS {}", request.getServletPath());
             filterChain.doFilter(request, response);
             return;
         }
 
         String jwt = resolveToken(request);
         if (jwt == null || jwt.isBlank()) {
+            log.debug("No JWT token found for path {}", request.getServletPath());
             filterChain.doFilter(request, response);
             return;
         }
@@ -59,6 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             login = jwtService.extractLogin(jwt);
         } catch (JwtException e) {
+            log.warn("Failed to extract login from JWT: {}", e.getMessage());
             clearTokenCookie(response);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
@@ -70,6 +76,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .findByLogin(login);
 
             if (userOpt.isEmpty()) {
+                log.warn("User not found for login {}", login);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
@@ -90,6 +97,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 context.setAuthentication(authToken);
                 SecurityContextHolder.setContext(context);
+                log.debug("Authenticated user login={} via JWT", login);
+            } else {
+                log.warn("JWT is not valid for login {}", login);
             }
         }
         filterChain.doFilter(request, response);

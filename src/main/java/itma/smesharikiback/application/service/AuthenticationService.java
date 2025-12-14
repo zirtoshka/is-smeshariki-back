@@ -8,6 +8,7 @@ import itma.smesharikiback.presentation.dto.request.smesharik.SmesharikSignUpReq
 import itma.smesharikiback.presentation.dto.response.JwtAuthenticationResponse;
 import itma.smesharikiback.infrastructure.security.JwtService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationService {
     private final CommonService commonService;
     private final SmesharikService smesharikService;
@@ -40,10 +42,7 @@ public class AuthenticationService {
     }
 
     public JwtAuthenticationResponse signIn(SmesharikSignInRequest request) {
-        System.out.println(new UsernamePasswordAuthenticationToken(
-                request.getLogin(),
-                request.getPassword()
-        ));
+        log.info("Authenticating user login={}", request.getLogin());
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.getLogin(),
                 request.getPassword()

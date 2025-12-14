@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.type.SqlTypes;
 
 @Getter
 @Setter
@@ -28,8 +30,8 @@ public class Friend {
     @JoinColumn(name = "follower_id", nullable = false)
     private Smesharik follower;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(columnDefinition = "friend_status")
     private FriendStatus status;
 }
 

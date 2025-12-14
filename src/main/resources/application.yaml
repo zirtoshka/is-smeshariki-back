@@ -14,12 +14,27 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        type:
+          preferred_enum_type: postgresql_enum
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   sql:
     init:
       mode: always
       platform: postgres
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 app:
   cors:

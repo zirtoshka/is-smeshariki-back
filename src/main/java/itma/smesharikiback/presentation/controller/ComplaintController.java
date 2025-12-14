@@ -14,12 +14,20 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/complaint")
 @RequiredArgsConstructor
 public class ComplaintController {
     private final ComplaintService complaintService;
+    private static final List<GeneralStatus> DEFAULT_STATUSES = Arrays.asList(
+            GeneralStatus.NEW,
+            GeneralStatus.DONE,
+            GeneralStatus.IN_PROGRESS,
+            GeneralStatus.CANCELED
+    );
 
     @PostMapping
     public ComplaintResponse add(
@@ -53,16 +61,15 @@ public class ComplaintController {
             @RequestParam(required = false, defaultValue = "0") @Min(value = 0) Integer page,
             @RequestParam(required = false, defaultValue = "10") @Min(value = 1) @Max(value = 50) Integer size
     ) {
-        if (statuses == null || statuses.isEmpty()) {
-            statuses = Arrays.asList(
-                    GeneralStatus.NEW,
-                    GeneralStatus.DONE,
-                    GeneralStatus.IN_PROGRESS,
-                    GeneralStatus.CANCELED
-            );
+        List<GeneralStatus> normalizedStatuses = statuses == null ? List.of() : statuses.stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        if (normalizedStatuses.isEmpty()) {
+            normalizedStatuses = DEFAULT_STATUSES;
         }
 
-        return complaintService.getAllComplaints(description, statuses, isMine, sortField, ascending, page, size);
+        return complaintService.getAllComplaints(description, normalizedStatuses, isMine, sortField, ascending, page, size);
     }
 }
 

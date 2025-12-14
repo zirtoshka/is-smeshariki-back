@@ -1,6 +1,7 @@
 package itma.smesharikiback.infrastructure.specification;
 
 import itma.smesharikiback.domain.model.Smesharik;
+import itma.smesharikiback.domain.model.SmesharikRole;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class SmesharikSpecification {
         };
     }
 
-    public static Specification<Smesharik> hasRoles(List<String> roles) {
+    public static Specification<Smesharik> hasRoles(List<SmesharikRole> roles) {
         return (root, query, criteriaBuilder) -> {
             if (roles == null || roles.isEmpty()) {
                 return criteriaBuilder.conjunction();

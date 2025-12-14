@@ -1,12 +1,13 @@
 package itma.smesharikiback.infrastructure.config;
 
 
-import itma.smesharikiback.infrastructure.security.JwtAuthenticationFilter;
 import itma.smesharikiback.application.service.CommonService;
+import itma.smesharikiback.infrastructure.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -26,6 +27,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,9 +38,16 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
+    private static final List<String> DEV_ALLOWED_ORIGINS = List.of(
+            "http://localhost",
+            "http://localhost:4200",
+            "http://localhost:80"
+    );
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CommonService commonService;
-    @Value("${app.cors.allowed-origins:http://localhost,http://localhost:4200}")
+    private final Environment environment;
+    @Value("${app.cors.allowed-origins:}")
     private String allowedOrigins;
 
     @Bean
@@ -81,33 +90,46 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        String sanitized = allowedOrigins
-                .replace("[", "")
-                .replace("]", "");
-        List<String> origins = Arrays.stream(sanitized.split(","))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .collect(Collectors.toList());
+        List<String> origins = resolveAllowedOrigins();
+        validateOriginsForCredentials(origins, Boolean.TRUE);
+        configuration.setAllowCredentials(true);
         configuration.setAllowedOriginPatterns(origins);
         configuration.setAllowedOrigins(origins);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
+    private List<String> resolveAllowedOrigins() {
+        boolean prodProfile = Arrays.asList(environment.getActiveProfiles()).contains("prod");
+        if (prodProfile) {
+            List<String> origins = parseOrigins(allowedOrigins);
+            if (origins.isEmpty()) {
+                throw new IllegalStateException("Configure app.cors.allowed-origins for prod profile");
+            }
+            return origins;
+        }
+        return DEV_ALLOWED_ORIGINS;
+    }
+
+    private List<String> parseOrigins(String originsSource) {
+        if (originsSource == null) {
+            return Collections.emptyList();
+        }
+        String sanitized = originsSource
+                .replace("[", "")
+                .replace("]", "");
+        return Arrays.stream(sanitized.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toList());
+    }
+
+    private void validateOriginsForCredentials(List<String> origins, Boolean allowCredentials) {
+        if (Boolean.TRUE.equals(allowCredentials) && origins.stream().anyMatch("*"::equals)) {
+            throw new IllegalStateException("Wildcard origins are not allowed when credentials are enabled");
+        }
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

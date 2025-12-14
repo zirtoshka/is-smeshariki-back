@@ -5,6 +5,7 @@ import itma.smesharikiback.domain.exception.AccessDeniedException;
 import itma.smesharikiback.domain.exception.DomainException;
 import itma.smesharikiback.domain.exception.ValidationException;
 import itma.smesharikiback.domain.model.Smesharik;
+import itma.smesharikiback.domain.model.SmesharikRole;
 import itma.smesharikiback.domain.repository.SmesharikRepository;
 import itma.smesharikiback.presentation.dto.request.smesharik.SmesharikChangePasswordRequest;
 import itma.smesharikiback.presentation.dto.request.smesharik.SmesharikChangeRoleRequest;
@@ -163,8 +164,10 @@ public class SmesharikService {
     public @NotNull PaginatedResponse<SmesharikResponse> getAll(String nameOrLogin, List<String> roles, @Min(value = 0) Integer page, @Min(value = 1) @Max(value = 50) Integer size) {
         Pageable pageable = PageRequest.of(page, size);
 
+        List<SmesharikRole> parsedRoles = parseRoles(roles);
+
         Specification<Smesharik> specification = Specification.where(SmesharikSpecification.hasNameOrLogin(nameOrLogin))
-                .and(SmesharikSpecification.hasRoles(roles));
+                .and(SmesharikSpecification.hasRoles(parsedRoles));
 
         Page<Smesharik> smesharikPage = repository.findAll(specification, pageable);
 
@@ -180,6 +183,32 @@ public class SmesharikService {
                 smesharikPage.getSize()
         );
 
+    }
+
+    private List<SmesharikRole> parseRoles(List<String> roles) {
+        if (roles == null) {
+            return List.of(SmesharikRole.USER, SmesharikRole.ADMIN, SmesharikRole.DOCTOR);
+        }
+        List<SmesharikRole> result = roles.stream()
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .map(String::toUpperCase)
+                .map(this::toRoleIfValid)
+                .filter(Objects::nonNull)
+                .toList();
+        if (result.isEmpty()) {
+            return List.of(SmesharikRole.USER, SmesharikRole.ADMIN, SmesharikRole.DOCTOR);
+        }
+        return result;
+    }
+
+    private SmesharikRole toRoleIfValid(String roleName) {
+        try {
+            return SmesharikRole.valueOf(roleName);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 }
 

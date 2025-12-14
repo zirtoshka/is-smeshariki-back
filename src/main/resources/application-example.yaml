@@ -1,3 +1,4 @@
+# Example configuration showing environment-driven settings.
 server:
   port: ${SERVER_PORT:8081}
 
@@ -9,6 +10,11 @@ spring:
   config:
     import:
       - optional:classpath:config/secret.sample.yaml
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://postgres:5432/studs}
+    username: ${DB_USERNAME:user}
+    password: ${DB_PASSWORD:password}
+    driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
   jpa:
     show-sql: true
     properties:

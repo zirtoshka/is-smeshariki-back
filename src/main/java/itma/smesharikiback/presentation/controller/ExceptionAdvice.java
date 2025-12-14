@@ -4,6 +4,7 @@ import io.jsonwebtoken.JwtException;
 import itma.smesharikiback.domain.exception.AccessDeniedException;
 import itma.smesharikiback.domain.exception.DomainException;
 import itma.smesharikiback.domain.exception.ValidationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @ControllerAdvice
 public class ExceptionAdvice {
 
@@ -45,6 +47,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<?> jwtException(JwtException ignoredE) {
         Map<String, String> errors = new HashMap<>();
+        log.error(ignoredE.getMessage(), ignoredE);
         errors.put("message", "Неверный токен!");
         return ResponseEntity.badRequest().body(errors);
     }

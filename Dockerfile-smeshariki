@@ -1,4 +1,4 @@
-FROM amazoncorretto:21-alpine-jdk AS build
+FROM maven:3.9-amazoncorretto-21 AS build
 WORKDIR /workspace
 
 COPY pom.xml .
@@ -8,8 +8,27 @@ COPY src src
 
 RUN ./mvnw -B clean package -DskipTests
 
-FROM amazoncorretto:21-alpine-jre
+FROM eclipse-temurin:21-jre
 WORKDIR /app
+RUN set -eux; \
+    if command -v apt-get >/dev/null; then \
+        apt-get update; \
+        apt-get install -y --no-install-recommends curl; \
+        rm -rf /var/lib/apt/lists/*; \
+    elif command -v microdnf >/dev/null; then \
+        microdnf install -y curl; \
+        microdnf clean all; \
+    elif command -v yum >/dev/null; then \
+        yum install -y curl; \
+        yum clean all; \
+    elif command -v apk >/dev/null; then \
+        apk add --no-cache curl; \
+    else \
+        echo "No supported package manager found" >&2; \
+        exit 1; \
+    fi
 COPY --from=build /workspace/target/smeshariki-back-0.0.1-SNAPSHOT.war /app/smeshariki-back-0.0.1-SNAPSHOT.war
 EXPOSE 8081
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8081/actuator/health || exit 1
 CMD ["java", "-jar", "/app/smeshariki-back-0.0.1-SNAPSHOT.war"]

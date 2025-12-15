@@ -38,6 +38,12 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
+    private static final String[] MANAGEMENT_ENDPOINTS = {
+            "/actuator/health", "/actuator/health/**",
+            "/actuator/info",
+            "/actuator/metrics", "/actuator/metrics/**",
+            "/actuator/prometheus"
+    };
     private static final List<String> DEV_ALLOWED_ORIGINS = List.of(
             "http://localhost",
             "http://localhost:4200",
@@ -57,6 +63,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(MANAGEMENT_ENDPOINTS).permitAll()
                         .requestMatchers("/api/**").hasAnyAuthority("ADMIN", "USER", "DOCTOR")
                         .requestMatchers("/ws/**").hasAnyAuthority("ADMIN", "USER", "DOCTOR")
                         .anyRequest().authenticated())
